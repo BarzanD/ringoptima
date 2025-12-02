@@ -67,18 +67,26 @@
             width: 280px; background: var(--glass-bg); backdrop-filter: blur(40px);
             border-right: 1px solid var(--glass-border); padding: 24px 16px;
             display: flex; flex-direction: column; position: fixed; top: 0; left: 0;
-            height: 100vh; z-index: 100; transition: transform var(--transition-normal), width var(--transition-normal);
+            height: 100vh; z-index: 100; transition: transform var(--transition-normal);
         }
-        .sidebar.collapsed { width: 70px; }
-        .sidebar.collapsed .brand h1, .sidebar.collapsed .brand span,
-        .sidebar.collapsed .nav-label, .sidebar.collapsed .nav-item span:not(.nav-badge),
-        .sidebar.collapsed .sidebar-stats .stat-row span:first-child,
-        .sidebar.collapsed .nav-badge { display: none; }
-        .sidebar.collapsed .nav-item { justify-content: center; padding: 12px; }
-        .sidebar.collapsed .sidebar-stats { padding: 8px; }
-        .sidebar.collapsed .stat-row { justify-content: center; }
+        .sidebar.hidden { transform: translateX(-100%); }
         .main-content { transition: margin-left var(--transition-normal); }
-        body.sidebar-collapsed .main-content { margin-left: 70px; }
+        body.sidebar-hidden .main-content { margin-left: 0; }
+
+        /* Sidebar Toggle Button */
+        .sidebar-toggle {
+            position: fixed; top: 20px; left: 290px; width: 36px; height: 36px;
+            border-radius: var(--radius-sm); border: none;
+            background: var(--glass-bg); backdrop-filter: blur(20px);
+            color: white; cursor: pointer; z-index: 101;
+            display: flex; align-items: center; justify-content: center;
+            transition: left var(--transition-normal), background var(--transition-fast);
+            border: 1px solid var(--glass-border);
+        }
+        .sidebar-toggle:hover { background: rgba(255,255,255,0.2); }
+        .sidebar-toggle svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; fill: none; transition: transform var(--transition-fast); }
+        body.sidebar-hidden .sidebar-toggle { left: 16px; }
+        body.sidebar-hidden .sidebar-toggle svg { transform: rotate(180deg); }
 
         .sidebar-header { display: flex; align-items: center; gap: 12px; padding: 0 8px 24px; border-bottom: 1px solid var(--glass-border); margin-bottom: 24px; }
         .logo { width: 48px; height: 48px; background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1)); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; }
@@ -88,12 +96,7 @@
         .brand span { font-size: 0.7rem; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px; }
 
         .nav-section { margin-bottom: 24px; }
-        .nav-section.collapsible .nav-items { max-height: 500px; overflow: hidden; transition: max-height var(--transition-normal), opacity var(--transition-normal); opacity: 1; }
-        .nav-section.collapsible.collapsed .nav-items { max-height: 0; opacity: 0; }
-        .nav-label { color: rgba(255,255,255,0.6); font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; padding: 0 12px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: color var(--transition-fast); }
-        .nav-label:hover { color: rgba(255,255,255,0.9); }
-        .nav-label svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2; fill: none; transition: transform var(--transition-fast); }
-        .nav-section.collapsed .nav-label svg { transform: rotate(-90deg); }
+        .nav-label { color: rgba(255,255,255,0.6); font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; padding: 0 12px; margin-bottom: 8px; }
         .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: var(--radius-md); color: rgba(255,255,255,0.85); font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all var(--transition-fast); border: none; background: transparent; width: 100%; text-align: left; }
         .nav-item:hover { background: rgba(255,255,255,0.1); color: white; }
         .nav-item.active { background: rgba(255,255,255,0.2); color: white; }
@@ -288,6 +291,7 @@
             .sidebar.open { transform: translateX(0); }
             .main-content { margin-left: 0; }
             .mobile-menu-btn { display: flex; }
+            .sidebar-toggle { display: none; }
             .header { padding-top: 60px; }
             .chat-panel { width: 100%; right: -100%; }
         }
@@ -305,6 +309,7 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <button class="mobile-menu-btn" id="mobileMenuBtn"><svg viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/></svg></button>
+    <button class="sidebar-toggle" id="sidebarToggle"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
 
     <div class="app-container">
         <aside class="sidebar" id="sidebar">
@@ -313,21 +318,17 @@
                 <div class="brand"><h1>Ringoptima</h1><span>Enterprise</span></div>
             </div>
 
-            <nav class="nav-section collapsible" id="navHuvudmeny">
-                <div class="nav-label" data-toggle="navHuvudmeny"><span>Huvudmeny</span><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
-                <div class="nav-items">
-                    <button class="nav-item active" data-view="dashboard"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg><span>Dashboard</span></button>
-                    <button class="nav-item" data-view="contacts"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Kontakter</span><span class="nav-badge" id="contactCount">0</span></button>
-                    <button class="nav-item" data-view="batches"><svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg><span>Importerade Listor</span></button>
-                </div>
+            <nav class="nav-section">
+                <div class="nav-label">Huvudmeny</div>
+                <button class="nav-item active" data-view="dashboard"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>Dashboard</button>
+                <button class="nav-item" data-view="contacts"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Kontakter<span class="nav-badge" id="contactCount">0</span></button>
+                <button class="nav-item" data-view="batches"><svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>Importerade Listor</button>
             </nav>
 
-            <nav class="nav-section collapsible" id="navVerktyg">
-                <div class="nav-label" data-toggle="navVerktyg"><span>Verktyg</span><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
-                <div class="nav-items">
-                    <button class="nav-item" data-action="import"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><span>Importera Data</span></button>
-                    <button class="nav-item" data-action="export"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span>Exportera CSV</span></button>
-                </div>
+            <nav class="nav-section">
+                <div class="nav-label">Verktyg</div>
+                <button class="nav-item" data-action="import"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Importera Data</button>
+                <button class="nav-item" data-action="export"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Exportera CSV</button>
             </nav>
 
             <div class="sidebar-stats">
@@ -1005,12 +1006,10 @@
 
             updateStats(); renderContacts(); renderBatches(); renderRecentContacts();
 
-            // Nav section toggle
-            document.querySelectorAll('.nav-label[data-toggle]').forEach(label => {
-                label.addEventListener('click', () => {
-                    const section = document.getElementById(label.dataset.toggle);
-                    if (section) section.classList.toggle('collapsed');
-                });
+            // Sidebar toggle (slide left/right)
+            document.getElementById('sidebarToggle').addEventListener('click', () => {
+                document.body.classList.toggle('sidebar-hidden');
+                document.getElementById('sidebar').classList.toggle('hidden');
             });
 
             // Nav
