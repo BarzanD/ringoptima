@@ -18,7 +18,6 @@
             --color-danger: #ef4444;
             --color-info: #3b82f6;
             --glass-bg: rgba(255, 255, 255, 0.12);
-            --glass-bg-solid: rgba(255, 255, 255, 0.95);
             --glass-border: rgba(255, 255, 255, 0.25);
             --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
             --shadow-md: 0 8px 32px rgba(0,0,0,0.15);
@@ -29,2147 +28,687 @@
             --radius-xl: 28px;
             --transition-fast: 0.15s ease;
             --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
             min-height: 100vh;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Accessibility - Focus States */
-        :focus-visible {
-            outline: 3px solid rgba(255,255,255,0.8);
-            outline-offset: 2px;
-        }
+        :focus-visible { outline: 3px solid rgba(255,255,255,0.8); outline-offset: 2px; }
 
-        /* Skip Link for Accessibility */
         .skip-link {
-            position: absolute;
-            top: -100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: white;
-            color: var(--color-primary);
-            padding: 12px 24px;
-            border-radius: var(--radius-md);
-            font-weight: 600;
-            z-index: 10000;
-            transition: top var(--transition-fast);
+            position: absolute; top: -100px; left: 50%; transform: translateX(-50%);
+            background: white; color: var(--color-primary); padding: 12px 24px;
+            border-radius: var(--radius-md); font-weight: 600; z-index: 10000;
         }
+        .skip-link:focus { top: 16px; }
 
-        .skip-link:focus {
-            top: 16px;
-        }
-
-        /* Animated Background */
-        .bg-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            overflow: hidden;
-        }
-
-        .orb {
-            position: absolute;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3), transparent 70%);
-            filter: blur(60px);
-            will-change: transform;
-        }
-
+        .bg-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+        .orb { position: absolute; border-radius: 50%; background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3), transparent 70%); filter: blur(60px); }
         .orb-1 { width: 500px; height: 500px; top: -150px; left: -150px; animation: float1 25s ease-in-out infinite; }
         .orb-2 { width: 400px; height: 400px; bottom: -100px; right: -100px; animation: float2 30s ease-in-out infinite; }
         .orb-3 { width: 350px; height: 350px; top: 40%; right: -100px; animation: float3 28s ease-in-out infinite; }
-        .orb-4 { width: 300px; height: 300px; bottom: 20%; left: 10%; animation: float4 22s ease-in-out infinite; }
 
-        @keyframes float1 { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(80px, 120px) scale(1.1); } }
-        @keyframes float2 { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(-100px, -80px) scale(1.15); } }
+        @keyframes float1 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(80px, 120px); } }
+        @keyframes float2 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-100px, -80px); } }
         @keyframes float3 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-120px, 80px); } }
-        @keyframes float4 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(60px, -60px); } }
 
-        /* Layout */
-        .app-container {
-            display: flex;
-            min-height: 100vh;
-            position: relative;
-            z-index: 1;
-        }
+        .app-container { display: flex; min-height: 100vh; position: relative; z-index: 1; }
 
         /* Sidebar */
         .sidebar {
-            width: 280px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(40px) saturate(180%);
-            -webkit-backdrop-filter: blur(40px) saturate(180%);
-            border-right: 1px solid var(--glass-border);
-            padding: 24px 16px;
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            z-index: 100;
-            transition: transform var(--transition-normal);
+            width: 280px; background: var(--glass-bg); backdrop-filter: blur(40px);
+            border-right: 1px solid var(--glass-border); padding: 24px 16px;
+            display: flex; flex-direction: column; position: fixed; top: 0; left: 0;
+            height: 100vh; z-index: 100; transition: transform var(--transition-normal);
         }
 
-        .sidebar-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 0 8px 24px;
-            border-bottom: 1px solid var(--glass-border);
-            margin-bottom: 24px;
-        }
+        .sidebar-header { display: flex; align-items: center; gap: 12px; padding: 0 8px 24px; border-bottom: 1px solid var(--glass-border); margin-bottom: 24px; }
+        .logo { width: 48px; height: 48px; background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1)); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; }
+        .logo svg { width: 28px; height: 28px; stroke: white; }
+        .brand { color: white; }
+        .brand h1 { font-size: 1.4rem; font-weight: 800; }
+        .brand span { font-size: 0.7rem; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px; }
 
-        .logo {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1));
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: var(--shadow-sm);
-        }
+        .nav-section { margin-bottom: 24px; }
+        .nav-label { color: rgba(255,255,255,0.6); font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; padding: 0 12px; margin-bottom: 8px; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: var(--radius-md); color: rgba(255,255,255,0.85); font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all var(--transition-fast); border: none; background: transparent; width: 100%; text-align: left; }
+        .nav-item:hover { background: rgba(255,255,255,0.1); color: white; }
+        .nav-item.active { background: rgba(255,255,255,0.2); color: white; }
+        .nav-item svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; fill: none; }
+        .nav-badge { margin-left: auto; background: var(--color-success); color: white; font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 10px; }
 
-        .logo svg {
-            width: 28px;
-            height: 28px;
-            stroke: white;
-        }
-
-        .brand {
-            color: white;
-        }
-
-        .brand h1 {
-            font-size: 1.4rem;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-
-        .brand span {
-            font-size: 0.7rem;
-            opacity: 0.8;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Navigation */
-        .nav-section {
-            margin-bottom: 24px;
-        }
-
-        .nav-label {
-            color: rgba(255,255,255,0.6);
-            font-size: 0.65rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            padding: 0 12px;
-            margin-bottom: 8px;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            border-radius: var(--radius-md);
-            color: rgba(255,255,255,0.85);
-            font-size: 0.9rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all var(--transition-fast);
-            border: none;
-            background: transparent;
-            width: 100%;
-            text-align: left;
-        }
-
-        .nav-item:hover {
-            background: rgba(255,255,255,0.1);
-            color: white;
-        }
-
-        .nav-item.active {
-            background: rgba(255,255,255,0.2);
-            color: white;
-        }
-
-        .nav-item svg {
-            width: 20px;
-            height: 20px;
-            stroke: currentColor;
-            stroke-width: 2;
-            fill: none;
-        }
-
-        .nav-badge {
-            margin-left: auto;
-            background: var(--color-success);
-            color: white;
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 10px;
-        }
-
-        /* Stats in Sidebar */
-        .sidebar-stats {
-            margin-top: auto;
-            padding: 16px;
-            background: rgba(255,255,255,0.08);
-            border-radius: var(--radius-md);
-        }
-
-        .stat-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            color: white;
-            font-size: 0.85rem;
-        }
-
-        .stat-row:not(:last-child) {
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .stat-value {
-            font-weight: 700;
-        }
+        .sidebar-stats { margin-top: auto; padding: 16px; background: rgba(255,255,255,0.08); border-radius: var(--radius-md); }
+        .stat-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; color: white; font-size: 0.85rem; }
+        .stat-row:not(:last-child) { border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .stat-value { font-weight: 700; }
 
         /* Main Content */
-        .main-content {
-            flex: 1;
-            margin-left: 280px;
-            padding: 24px;
-            min-height: 100vh;
-        }
+        .main-content { flex: 1; margin-left: 280px; padding: 24px; min-height: 100vh; }
 
-        /* Header */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-
-        .header-left h2 {
-            color: white;
-            font-size: 1.8rem;
-            font-weight: 700;
-        }
-
-        .header-left p {
-            color: rgba(255,255,255,0.8);
-            font-size: 0.9rem;
-            margin-top: 4px;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; }
+        .header-left h2 { color: white; font-size: 1.8rem; font-weight: 700; }
+        .header-left p { color: rgba(255,255,255,0.8); font-size: 0.9rem; margin-top: 4px; }
+        .header-actions { display: flex; gap: 12px; flex-wrap: wrap; }
 
         /* Buttons */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 12px 20px;
-            border-radius: var(--radius-md);
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all var(--transition-fast);
-            border: none;
-            font-family: inherit;
-        }
+        .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: var(--radius-md); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all var(--transition-fast); border: none; font-family: inherit; }
+        .btn svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; }
+        .btn-primary { background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .btn-glass { background: var(--glass-bg); backdrop-filter: blur(20px); color: white; border: 1px solid var(--glass-border); }
+        .btn-glass:hover { background: rgba(255,255,255,0.2); }
+        .btn-success { background: var(--color-success); color: white; }
+        .btn-danger { background: var(--color-danger); color: white; }
+        .btn-sm { padding: 8px 14px; font-size: 0.8rem; }
 
-        .btn svg {
-            width: 18px;
-            height: 18px;
-            stroke: currentColor;
-            stroke-width: 2;
-            fill: none;
-        }
+        /* Search */
+        .search-filter-bar { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+        .search-box { flex: 1; min-width: 250px; position: relative; }
+        .search-box svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; stroke: rgba(255,255,255,0.6); }
+        .search-input { width: 100%; padding: 12px 16px 12px 44px; background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: var(--radius-md); color: white; font-size: 0.9rem; }
+        .search-input::placeholder { color: rgba(255,255,255,0.5); }
+        .search-input:focus { border-color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.15); outline: none; }
 
-        .btn-primary {
-            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
-            color: white;
-            box-shadow: var(--shadow-sm);
-        }
+        .filter-select { padding: 12px 40px 12px 16px; background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: var(--radius-md); color: white; font-size: 0.9rem; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M6 9L1 4h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
+        .filter-select option { background: #2596be; color: white; }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .btn-glass {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            color: white;
-            border: 1px solid var(--glass-border);
-        }
-
-        .btn-glass:hover {
-            background: rgba(255,255,255,0.2);
-        }
-
-        .btn-success {
-            background: var(--color-success);
-            color: white;
-        }
-
-        .btn-danger {
-            background: var(--color-danger);
-            color: white;
-        }
-
-        .btn-sm {
-            padding: 8px 14px;
-            font-size: 0.8rem;
-        }
-
-        .btn-icon {
-            padding: 10px;
-            border-radius: var(--radius-sm);
-        }
-
-        /* Search & Filter Bar */
-        .search-filter-bar {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .search-box {
-            flex: 1;
-            min-width: 250px;
-            position: relative;
-        }
-
-        .search-box svg {
-            position: absolute;
-            left: 14px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 18px;
-            height: 18px;
-            stroke: rgba(255,255,255,0.6);
-            stroke-width: 2;
-            fill: none;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 12px 16px 12px 44px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-md);
-            color: white;
-            font-size: 0.9rem;
-            font-family: inherit;
-            transition: all var(--transition-fast);
-        }
-
-        .search-input::placeholder {
-            color: rgba(255,255,255,0.5);
-        }
-
-        .search-input:focus {
-            border-color: rgba(255,255,255,0.5);
-            background: rgba(255,255,255,0.15);
-        }
-
-        .filter-select {
-            padding: 12px 40px 12px 16px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-md);
-            color: white;
-            font-size: 0.9rem;
-            font-family: inherit;
-            cursor: pointer;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 14px center;
-        }
-
-        .filter-select option {
-            background: #2596be;
-            color: white;
-        }
-
-        /* Cards Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .stat-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(30px);
-            border-radius: var(--radius-lg);
-            padding: 20px;
-            border: 1px solid var(--glass-border);
-            transition: all var(--transition-normal);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-        }
-
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: var(--glass-bg); backdrop-filter: blur(30px); border-radius: var(--radius-lg); padding: 20px; border: 1px solid var(--glass-border); transition: all var(--transition-normal); position: relative; overflow: hidden; cursor: pointer; }
+        .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
         .stat-card.telenor::before { background: #00bcd4; }
         .stat-card.tele2::before { background: #4caf50; }
         .stat-card.tre::before { background: #9c27b0; }
         .stat-card.telia::before { background: #ff9800; }
         .stat-card.total::before { background: linear-gradient(90deg, var(--color-primary), var(--color-secondary)); }
+        .stat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); background: rgba(255,255,255,0.18); }
+        .stat-card.active { box-shadow: 0 0 0 2px white, var(--shadow-md); }
 
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .stat-card-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: var(--radius-sm);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 12px;
-        }
-
+        .stat-card-icon { width: 40px; height: 40px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
         .stat-card.telenor .stat-card-icon { background: rgba(0,188,212,0.2); }
         .stat-card.tele2 .stat-card-icon { background: rgba(76,175,80,0.2); }
         .stat-card.tre .stat-card-icon { background: rgba(156,39,176,0.2); }
         .stat-card.telia .stat-card-icon { background: rgba(255,152,0,0.2); }
         .stat-card.total .stat-card-icon { background: rgba(255,255,255,0.15); }
-
-        .stat-card-icon svg {
-            width: 22px;
-            height: 22px;
-            stroke-width: 2;
-            fill: none;
-        }
-
+        .stat-card-icon svg { width: 22px; height: 22px; stroke-width: 2; fill: none; }
         .stat-card.telenor .stat-card-icon svg { stroke: #00bcd4; }
         .stat-card.tele2 .stat-card-icon svg { stroke: #4caf50; }
         .stat-card.tre .stat-card-icon svg { stroke: #9c27b0; }
         .stat-card.telia .stat-card-icon svg { stroke: #ff9800; }
         .stat-card.total .stat-card-icon svg { stroke: white; }
 
-        .stat-card-value {
-            color: white;
-            font-size: 2rem;
-            font-weight: 800;
-            line-height: 1;
-        }
-
-        .stat-card-label {
-            color: rgba(255,255,255,0.7);
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-top: 4px;
-        }
+        .stat-card-value { color: white; font-size: 2rem; font-weight: 800; line-height: 1; }
+        .stat-card-label { color: rgba(255,255,255,0.7); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
 
         /* Glass Panel */
-        .glass-panel {
-            background: var(--glass-bg);
-            backdrop-filter: blur(40px) saturate(180%);
-            -webkit-backdrop-filter: blur(40px) saturate(180%);
-            border-radius: var(--radius-xl);
-            border: 1px solid var(--glass-border);
-            box-shadow: var(--shadow-lg);
-            overflow: hidden;
-        }
-
-        .panel-header {
-            padding: 20px 24px;
-            border-bottom: 1px solid var(--glass-border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .panel-title {
-            color: white;
-            font-size: 1.1rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .panel-title svg {
-            width: 22px;
-            height: 22px;
-            stroke: currentColor;
-            stroke-width: 2;
-            fill: none;
-        }
+        .glass-panel { background: var(--glass-bg); backdrop-filter: blur(40px); border-radius: var(--radius-xl); border: 1px solid var(--glass-border); box-shadow: var(--shadow-lg); overflow: hidden; }
+        .panel-header { padding: 20px 24px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        .panel-title { color: white; font-size: 1.1rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .panel-title svg { width: 22px; height: 22px; stroke: currentColor; stroke-width: 2; fill: none; }
 
         /* Table */
-        .table-container {
-            overflow-x: auto;
-            max-height: 600px;
-            overflow-y: auto;
-        }
+        .table-container { overflow-x: auto; max-height: 600px; overflow-y: auto; }
+        .table-container::-webkit-scrollbar { width: 8px; height: 8px; }
+        .table-container::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+        .table-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
 
-        .table-container::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
+        .data-table { width: 100%; border-collapse: collapse; min-width: 1400px; }
+        .data-table th { position: sticky; top: 0; background: rgba(37,150,190,0.95); backdrop-filter: blur(10px); color: white; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 14px 12px; text-align: left; white-space: nowrap; z-index: 10; }
+        .data-table td { padding: 12px; color: rgba(255,255,255,0.95); font-size: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.08); vertical-align: top; }
+        .data-table tbody tr { transition: background var(--transition-fast); }
+        .data-table tbody tr:hover { background: rgba(255,255,255,0.08); }
 
-        .table-container::-webkit-scrollbar-track {
-            background: rgba(255,255,255,0.05);
-        }
+        .cell-company { font-weight: 600; max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .cell-multiline { white-space: pre-line; line-height: 1.5; max-width: 150px; font-size: 0.75rem; }
 
-        .table-container::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.2);
-            border-radius: 4px;
-        }
+        /* Inline Note Box */
+        .inline-note { width: 100%; min-width: 120px; }
+        .inline-note textarea { width: 100%; padding: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: var(--radius-sm); color: white; font-size: 0.75rem; font-family: inherit; resize: vertical; min-height: 50px; transition: all var(--transition-fast); }
+        .inline-note textarea::placeholder { color: rgba(255,255,255,0.4); }
+        .inline-note textarea:focus { outline: none; border-color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.15); }
 
-        .table-container::-webkit-scrollbar-thumb:hover {
-            background: rgba(255,255,255,0.3);
-        }
-
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 1200px;
-        }
-
-        .data-table th {
-            position: sticky;
-            top: 0;
-            background: rgba(37, 150, 190, 0.95);
-            backdrop-filter: blur(10px);
-            color: white;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            padding: 14px 16px;
-            text-align: left;
-            white-space: nowrap;
-            z-index: 10;
-        }
-
-        .data-table th:first-child { border-radius: 0; }
-        .data-table th:last-child { border-radius: 0; }
-
-        .data-table td {
-            padding: 14px 16px;
-            color: rgba(255,255,255,0.95);
-            font-size: 0.85rem;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-            vertical-align: top;
-        }
-
-        .data-table tbody tr {
-            transition: background var(--transition-fast);
-        }
-
-        .data-table tbody tr:hover {
-            background: rgba(255,255,255,0.08);
-        }
-
-        .data-table tbody tr.selected {
-            background: rgba(37, 150, 190, 0.2);
-        }
-
-        /* Cell Types */
-        .cell-company {
-            font-weight: 600;
-            max-width: 200px;
-        }
-
-        .cell-multiline {
-            white-space: pre-line;
-            line-height: 1.6;
-            max-width: 180px;
-        }
-
-        .cell-status {
-            display: inline-block;
-        }
-
-        /* Status Badges */
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-
-        .status-badge.new {
-            background: rgba(59, 130, 246, 0.2);
-            color: #93c5fd;
-        }
-
-        .status-badge.contacted {
-            background: rgba(245, 158, 11, 0.2);
-            color: #fcd34d;
-        }
-
-        .status-badge.followup {
-            background: rgba(168, 85, 247, 0.2);
-            color: #d8b4fe;
-        }
-
-        .status-badge.closed {
-            background: rgba(16, 185, 129, 0.2);
-            color: #6ee7b7;
-        }
-
-        .status-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-        }
-
-        .status-badge.new .status-dot { background: #3b82f6; }
-        .status-badge.contacted .status-dot { background: #f59e0b; }
-        .status-badge.followup .status-dot { background: #a855f7; }
-        .status-badge.closed .status-dot { background: #10b981; }
-
-        /* Action Buttons in Table */
-        .row-actions {
-            display: flex;
-            gap: 6px;
-        }
-
-        .action-btn {
-            width: 32px;
-            height: 32px;
-            border-radius: var(--radius-sm);
-            border: none;
-            background: rgba(255,255,255,0.1);
-            color: white;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all var(--transition-fast);
-        }
-
-        .action-btn:hover {
-            background: rgba(255,255,255,0.2);
-        }
-
+        /* Row Actions */
+        .row-actions { display: flex; gap: 4px; flex-wrap: wrap; }
+        .action-btn { width: 28px; height: 28px; border-radius: var(--radius-sm); border: none; background: rgba(255,255,255,0.1); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all var(--transition-fast); }
+        .action-btn:hover { background: rgba(255,255,255,0.2); }
         .action-btn.call { color: var(--color-success); }
         .action-btn.call:hover { background: rgba(16,185,129,0.3); }
-
-        .action-btn.log { color: var(--color-info); }
-        .action-btn.log:hover { background: rgba(59,130,246,0.3); }
-
         .action-btn.delete { color: var(--color-danger); }
         .action-btn.delete:hover { background: rgba(239,68,68,0.3); }
+        .action-btn svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2; fill: none; }
 
-        .action-btn svg {
-            width: 16px;
-            height: 16px;
-            stroke: currentColor;
-            stroke-width: 2;
-            fill: none;
-        }
+        /* Batch Management */
+        .batch-list { padding: 16px; }
+        .batch-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: rgba(255,255,255,0.08); border-radius: var(--radius-md); margin-bottom: 8px; }
+        .batch-info { color: white; }
+        .batch-name { font-weight: 600; font-size: 0.9rem; }
+        .batch-meta { font-size: 0.75rem; color: rgba(255,255,255,0.7); margin-top: 4px; }
+        .batch-actions { display: flex; gap: 8px; }
 
         /* Modals */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(8px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all var(--transition-normal);
-            padding: 20px;
-        }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; visibility: hidden; transition: all var(--transition-normal); padding: 20px; }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal { background: linear-gradient(135deg, rgba(37,150,190,0.95), rgba(118,93,182,0.95)); backdrop-filter: blur(40px); border-radius: var(--radius-xl); border: 1px solid var(--glass-border); width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; transform: scale(0.9); transition: transform var(--transition-normal); }
+        .modal-overlay.active .modal { transform: scale(1); }
+        .modal-header { padding: 24px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; }
+        .modal-title { color: white; font-size: 1.3rem; font-weight: 700; }
+        .modal-close { width: 36px; height: 36px; border-radius: 50%; border: none; background: rgba(255,255,255,0.1); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-close svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; }
+        .modal-body { padding: 24px; }
+        .modal-footer { padding: 16px 24px; border-top: 1px solid var(--glass-border); display: flex; justify-content: flex-end; gap: 12px; }
 
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
+        /* Form */
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; color: white; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; }
+        .form-input, .form-textarea, .form-select { width: 100%; padding: 12px 16px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: var(--radius-md); color: white; font-size: 0.9rem; font-family: inherit; }
+        .form-input::placeholder, .form-textarea::placeholder { color: rgba(255,255,255,0.5); }
+        .form-input:focus, .form-textarea:focus, .form-select:focus { border-color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.15); outline: none; }
+        .form-textarea { min-height: 100px; resize: vertical; }
+        .form-select option { background: var(--color-primary); }
 
-        .modal {
-            background: linear-gradient(135deg, rgba(37,150,190,0.95), rgba(118,93,182,0.95));
-            backdrop-filter: blur(40px);
-            border-radius: var(--radius-xl);
-            border: 1px solid var(--glass-border);
-            box-shadow: var(--shadow-lg);
-            width: 100%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
-            transform: scale(0.9) translateY(20px);
-            transition: transform var(--transition-normal);
-        }
+        /* Upload */
+        .upload-area { border: 2px dashed rgba(255,255,255,0.3); border-radius: var(--radius-lg); padding: 48px 24px; text-align: center; cursor: pointer; transition: all var(--transition-normal); background: rgba(255,255,255,0.05); }
+        .upload-area:hover, .upload-area.dragover { border-color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.1); }
+        .upload-icon { width: 64px; height: 64px; margin: 0 auto 16px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .upload-icon svg { width: 32px; height: 32px; stroke: white; stroke-width: 2; fill: none; }
+        .upload-text { color: white; font-size: 1.1rem; font-weight: 600; margin-bottom: 8px; }
+        .upload-hint { color: rgba(255,255,255,0.7); font-size: 0.9rem; }
 
-        .modal-overlay.active .modal {
-            transform: scale(1) translateY(0);
-        }
+        /* Chat Panel */
+        .chat-panel { position: fixed; right: -420px; top: 0; width: 400px; height: 100vh; background: linear-gradient(180deg, rgba(37,150,190,0.98), rgba(118,93,182,0.98)); backdrop-filter: blur(40px); border-left: 1px solid var(--glass-border); z-index: 200; display: flex; flex-direction: column; transition: right var(--transition-normal); }
+        .chat-panel.open { right: 0; }
+        .chat-header { padding: 20px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; }
+        .chat-header-left { display: flex; align-items: center; gap: 12px; }
+        .chat-avatar { width: 40px; height: 40px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .chat-avatar svg { width: 24px; height: 24px; stroke: var(--color-primary); stroke-width: 2; fill: none; }
+        .chat-title { color: white; font-weight: 700; }
+        .chat-subtitle { color: rgba(255,255,255,0.7); font-size: 0.75rem; }
+        .chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+        .chat-message { max-width: 85%; padding: 12px 16px; border-radius: var(--radius-md); font-size: 0.9rem; line-height: 1.5; }
+        .chat-message.user { background: rgba(255,255,255,0.2); color: white; align-self: flex-end; }
+        .chat-message.assistant { background: rgba(255,255,255,0.95); color: #1a1a1a; align-self: flex-start; }
+        .chat-input-area { padding: 16px; border-top: 1px solid var(--glass-border); }
+        .chat-input-wrapper { display: flex; gap: 10px; }
+        .chat-input { flex: 1; padding: 12px 16px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: var(--radius-md); color: white; font-size: 0.9rem; }
+        .chat-input::placeholder { color: rgba(255,255,255,0.5); }
+        .chat-send { width: 44px; height: 44px; border-radius: var(--radius-md); border: none; background: white; color: var(--color-primary); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .chat-send svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; fill: none; }
 
-        .modal-header {
-            padding: 24px;
-            border-bottom: 1px solid var(--glass-border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        .chat-toggle { position: fixed; bottom: 24px; right: 24px; width: 60px; height: 60px; border-radius: 50%; border: none; background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-lg); z-index: 150; transition: transform var(--transition-normal); }
+        .chat-toggle:hover { transform: scale(1.1); }
+        .chat-toggle svg { width: 28px; height: 28px; stroke: currentColor; stroke-width: 2; fill: none; }
 
-        .modal-title {
-            color: white;
-            font-size: 1.3rem;
-            font-weight: 700;
-        }
-
-        .modal-close {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border: none;
-            background: rgba(255,255,255,0.1);
-            color: white;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all var(--transition-fast);
-        }
-
-        .modal-close:hover {
-            background: rgba(255,255,255,0.2);
-        }
-
-        .modal-close svg {
-            width: 20px;
-            height: 20px;
-            stroke: currentColor;
-            stroke-width: 2;
-        }
-
-        .modal-body {
-            padding: 24px;
-        }
-
-        .modal-footer {
-            padding: 16px 24px;
-            border-top: 1px solid var(--glass-border);
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-        }
-
-        /* Form Elements */
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            color: white;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .form-input,
-        .form-textarea,
-        .form-select {
-            width: 100%;
-            padding: 12px 16px;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: var(--radius-md);
-            color: white;
-            font-size: 0.9rem;
-            font-family: inherit;
-            transition: all var(--transition-fast);
-        }
-
-        .form-input::placeholder,
-        .form-textarea::placeholder {
-            color: rgba(255,255,255,0.5);
-        }
-
-        .form-input:focus,
-        .form-textarea:focus,
-        .form-select:focus {
-            border-color: rgba(255,255,255,0.5);
-            background: rgba(255,255,255,0.15);
-            outline: none;
-        }
-
-        .form-textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        .form-select option {
-            background: var(--color-primary);
-            color: white;
-        }
-
-        /* Upload Area */
-        .upload-area {
-            border: 2px dashed rgba(255,255,255,0.3);
-            border-radius: var(--radius-lg);
-            padding: 48px 24px;
-            text-align: center;
-            cursor: pointer;
-            transition: all var(--transition-normal);
-            background: rgba(255,255,255,0.05);
-        }
-
-        .upload-area:hover,
-        .upload-area.dragover {
-            border-color: rgba(255,255,255,0.6);
-            background: rgba(255,255,255,0.1);
-        }
-
-        .upload-area.dragover {
-            transform: scale(1.02);
-        }
-
-        .upload-icon {
-            width: 64px;
-            height: 64px;
-            margin: 0 auto 16px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .upload-icon svg {
-            width: 32px;
-            height: 32px;
-            stroke: white;
-            stroke-width: 2;
-            fill: none;
-        }
-
-        .upload-text {
-            color: white;
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .upload-hint {
-            color: rgba(255,255,255,0.7);
-            font-size: 0.9rem;
-        }
-
-        /* AI Chat Panel */
-        .chat-panel {
-            position: fixed;
-            right: -420px;
-            top: 0;
-            width: 400px;
-            height: 100vh;
-            background: linear-gradient(180deg, rgba(37,150,190,0.98), rgba(118,93,182,0.98));
-            backdrop-filter: blur(40px);
-            border-left: 1px solid var(--glass-border);
-            z-index: 200;
-            display: flex;
-            flex-direction: column;
-            transition: right var(--transition-normal);
-            box-shadow: -10px 0 40px rgba(0,0,0,0.3);
-        }
-
-        .chat-panel.open {
-            right: 0;
-        }
-
-        .chat-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--glass-border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .chat-header-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .chat-avatar {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #fff, #e0e0e0);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .chat-avatar svg {
-            width: 24px;
-            height: 24px;
-            stroke: var(--color-primary);
-            stroke-width: 2;
-            fill: none;
-        }
-
-        .chat-title {
-            color: white;
-            font-weight: 700;
-        }
-
-        .chat-subtitle {
-            color: rgba(255,255,255,0.7);
-            font-size: 0.75rem;
-        }
-
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .chat-message {
-            max-width: 85%;
-            padding: 12px 16px;
-            border-radius: var(--radius-md);
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-
-        .chat-message.user {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            align-self: flex-end;
-            border-bottom-right-radius: 4px;
-        }
-
-        .chat-message.assistant {
-            background: rgba(255,255,255,0.95);
-            color: #1a1a1a;
-            align-self: flex-start;
-            border-bottom-left-radius: 4px;
-        }
-
-        .chat-input-area {
-            padding: 16px;
-            border-top: 1px solid var(--glass-border);
-        }
-
-        .chat-input-wrapper {
-            display: flex;
-            gap: 10px;
-        }
-
-        .chat-input {
-            flex: 1;
-            padding: 12px 16px;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: var(--radius-md);
-            color: white;
-            font-size: 0.9rem;
-            font-family: inherit;
-        }
-
-        .chat-input::placeholder {
-            color: rgba(255,255,255,0.5);
-        }
-
-        .chat-send {
-            width: 44px;
-            height: 44px;
-            border-radius: var(--radius-md);
-            border: none;
-            background: white;
-            color: var(--color-primary);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all var(--transition-fast);
-        }
-
-        .chat-send:hover {
-            transform: scale(1.05);
-        }
-
-        .chat-send svg {
-            width: 20px;
-            height: 20px;
-            stroke: currentColor;
-            stroke-width: 2;
-            fill: none;
-        }
-
-        /* Chat Toggle Button */
-        .chat-toggle {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            border: none;
-            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
-            color: white;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: var(--shadow-lg);
-            z-index: 150;
-            transition: all var(--transition-normal);
-        }
-
-        .chat-toggle:hover {
-            transform: scale(1.1);
-        }
-
-        .chat-toggle svg {
-            width: 28px;
-            height: 28px;
-            stroke: currentColor;
-            stroke-width: 2;
-            fill: none;
-        }
-
-        /* Call Log Section */
-        .call-log-item {
-            padding: 12px 16px;
-            background: rgba(255,255,255,0.05);
-            border-radius: var(--radius-md);
-            margin-bottom: 8px;
-            border-left: 3px solid transparent;
-        }
-
-        .call-log-item.incoming { border-left-color: var(--color-success); }
-        .call-log-item.outgoing { border-left-color: var(--color-info); }
-        .call-log-item.missed { border-left-color: var(--color-danger); }
-
-        .call-log-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .call-log-company {
-            color: white;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .call-log-time {
-            color: rgba(255,255,255,0.6);
-            font-size: 0.75rem;
-        }
-
-        .call-log-notes {
-            color: rgba(255,255,255,0.8);
-            font-size: 0.85rem;
-            line-height: 1.5;
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: white;
-        }
-
-        .empty-state svg {
-            width: 80px;
-            height: 80px;
-            stroke: rgba(255,255,255,0.4);
-            stroke-width: 1.5;
-            fill: none;
-            margin-bottom: 20px;
-        }
-
-        .empty-state h3 {
-            font-size: 1.3rem;
-            margin-bottom: 8px;
-        }
-
-        .empty-state p {
-            color: rgba(255,255,255,0.7);
-            max-width: 400px;
-            margin: 0 auto;
-        }
-
-        /* Toast Notifications */
-        .toast-container {
-            position: fixed;
-            top: 24px;
-            right: 24px;
-            z-index: 2000;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .toast {
-            background: white;
-            border-radius: var(--radius-md);
-            padding: 16px 20px;
-            box-shadow: var(--shadow-lg);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            min-width: 300px;
-            transform: translateX(120%);
-            transition: transform var(--transition-normal);
-        }
-
-        .toast.show {
-            transform: translateX(0);
-        }
-
-        .toast-icon {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .toast-icon svg {
-            width: 14px;
-            height: 14px;
-            stroke: white;
-            stroke-width: 3;
-            fill: none;
-        }
-
+        /* Toast */
+        .toast-container { position: fixed; top: 24px; right: 24px; z-index: 2000; display: flex; flex-direction: column; gap: 12px; }
+        .toast { background: white; border-radius: var(--radius-md); padding: 16px 20px; box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 12px; min-width: 300px; transform: translateX(120%); transition: transform var(--transition-normal); }
+        .toast.show { transform: translateX(0); }
+        .toast-icon { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .toast-icon svg { width: 14px; height: 14px; stroke: white; stroke-width: 3; fill: none; }
         .toast.success .toast-icon { background: var(--color-success); }
         .toast.error .toast-icon { background: var(--color-danger); }
         .toast.info .toast-icon { background: var(--color-info); }
+        .toast-message { color: #1a1a1a; font-size: 0.9rem; font-weight: 500; }
 
-        .toast-message {
-            color: #1a1a1a;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
+        /* Empty State */
+        .empty-state { text-align: center; padding: 60px 20px; color: white; }
+        .empty-state svg { width: 80px; height: 80px; stroke: rgba(255,255,255,0.4); stroke-width: 1.5; fill: none; margin-bottom: 20px; }
+        .empty-state h3 { font-size: 1.3rem; margin-bottom: 8px; }
+        .empty-state p { color: rgba(255,255,255,0.7); max-width: 400px; margin: 0 auto; }
 
-        /* Mobile Sidebar Toggle */
-        .mobile-menu-btn {
-            display: none;
-            position: fixed;
-            top: 16px;
-            left: 16px;
-            width: 44px;
-            height: 44px;
-            border-radius: var(--radius-md);
-            border: none;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            color: white;
-            cursor: pointer;
-            z-index: 150;
-        }
+        /* Mobile */
+        .mobile-menu-btn { display: none; position: fixed; top: 16px; left: 16px; width: 44px; height: 44px; border-radius: var(--radius-md); border: none; background: var(--glass-bg); backdrop-filter: blur(20px); color: white; cursor: pointer; z-index: 150; align-items: center; justify-content: center; }
+        .mobile-menu-btn svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 2; fill: none; }
 
-        .mobile-menu-btn svg {
-            width: 24px;
-            height: 24px;
-            stroke: currentColor;
-            stroke-width: 2;
-            fill: none;
-        }
-
-        /* Responsive */
         @media (max-width: 1024px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-
-            .sidebar.open {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .mobile-menu-btn {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .header {
-                padding-top: 60px;
-            }
-
-            .chat-panel {
-                width: 100%;
-                right: -100%;
-            }
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .mobile-menu-btn { display: flex; }
+            .header { padding-top: 60px; }
+            .chat-panel { width: 100%; right: -100%; }
         }
 
         @media (max-width: 768px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .header-left h2 {
-                font-size: 1.4rem;
-            }
-
-            .modal {
-                max-width: 100%;
-                margin: 10px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .search-filter-bar {
-                flex-direction: column;
-            }
-
-            .search-box {
-                min-width: 100%;
-            }
-
-            .header-actions {
-                width: 100%;
-            }
-
-            .header-actions .btn {
-                flex: 1;
-                justify-content: center;
-            }
-        }
-
-        /* Loading Spinner */
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(255,255,255,0.2);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .animate-in {
-            animation: fadeIn 0.4s ease forwards;
-        }
-
-        /* Print Styles */
-        @media print {
-            .sidebar, .chat-panel, .chat-toggle, .mobile-menu-btn, .toast-container {
-                display: none !important;
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            body {
-                background: white;
-            }
-
-            .glass-panel {
-                background: white;
-                border: 1px solid #ddd;
-            }
-
-            .data-table th {
-                background: #f0f0f0;
-                color: #333;
-            }
-
-            .data-table td {
-                color: #333;
-            }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .search-filter-bar { flex-direction: column; }
+            .search-box { min-width: 100%; }
         }
     </style>
 </head>
 <body>
     <a href="#main" class="skip-link">Hoppa till huvudinnehåll</a>
+    <div class="bg-animation"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
+    <div class="toast-container" id="toastContainer"></div>
 
-    <!-- Background Animation -->
-    <div class="bg-animation" aria-hidden="true">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
-        <div class="orb orb-4"></div>
-    </div>
-
-    <!-- Toast Container -->
-    <div class="toast-container" id="toastContainer" aria-live="polite"></div>
-
-    <!-- Mobile Menu Button -->
-    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Öppna meny">
-        <svg viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
-    </button>
+    <button class="mobile-menu-btn" id="mobileMenuBtn"><svg viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/></svg></button>
 
     <div class="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar" role="navigation" aria-label="Huvudnavigering">
+        <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <div class="logo">
-                    <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2">
-                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-                    </svg>
-                </div>
-                <div class="brand">
-                    <h1>Ringoptima</h1>
-                    <span>Enterprise Edition</span>
-                </div>
+                <div class="logo"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72"/></svg></div>
+                <div class="brand"><h1>Ringoptima</h1><span>Enterprise</span></div>
             </div>
 
             <nav class="nav-section">
                 <div class="nav-label">Huvudmeny</div>
-                <button class="nav-item active" data-view="dashboard">
-                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
-                    Dashboard
-                </button>
-                <button class="nav-item" data-view="contacts">
-                    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                    Kontakter
-                    <span class="nav-badge" id="contactCount">0</span>
-                </button>
-                <button class="nav-item" data-view="calls">
-                    <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72"/><path d="M15 7a3 3 0 0 1 3 3"/><path d="M18 2a8 8 0 0 1 4 7"/></svg>
-                    Samtalslogg
-                </button>
+                <button class="nav-item active" data-view="dashboard"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>Dashboard</button>
+                <button class="nav-item" data-view="contacts"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Kontakter<span class="nav-badge" id="contactCount">0</span></button>
+                <button class="nav-item" data-view="batches"><svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>Importerade Listor</button>
             </nav>
 
             <nav class="nav-section">
                 <div class="nav-label">Verktyg</div>
-                <button class="nav-item" data-action="import">
-                    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                    Importera Data
-                </button>
-                <button class="nav-item" data-action="export">
-                    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    Exportera CSV
-                </button>
+                <button class="nav-item" data-action="import"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Importera Data</button>
+                <button class="nav-item" data-action="export"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Exportera CSV</button>
             </nav>
 
             <div class="sidebar-stats">
-                <div class="stat-row">
-                    <span>Totalt kontakter</span>
-                    <span class="stat-value" id="sidebarTotalContacts">0</span>
-                </div>
-                <div class="stat-row">
-                    <span>Samtal idag</span>
-                    <span class="stat-value" id="sidebarCallsToday">0</span>
-                </div>
-                <div class="stat-row">
-                    <span>Uppföljning</span>
-                    <span class="stat-value" id="sidebarFollowups">0</span>
-                </div>
+                <div class="stat-row"><span>Totalt kontakter</span><span class="stat-value" id="sidebarTotal">0</span></div>
+                <div class="stat-row"><span>Importerade listor</span><span class="stat-value" id="sidebarBatches">0</span></div>
             </div>
         </aside>
 
-        <!-- Main Content -->
-        <main class="main-content" id="main" role="main">
-            <!-- Dashboard View -->
+        <main class="main-content" id="main">
+            <!-- Dashboard -->
             <section id="dashboardView" class="view active">
                 <div class="header">
-                    <div class="header-left">
-                        <h2>Dashboard</h2>
-                        <p>Översikt av din kontakthantering</p>
-                    </div>
+                    <div class="header-left"><h2>Dashboard</h2><p>Klicka på en operatör för att filtrera kontakter</p></div>
                     <div class="header-actions">
-                        <button class="btn btn-glass" data-action="import">
-                            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                            Importera
-                        </button>
-                        <button class="btn btn-primary" id="openChatBtn">
-                            <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                            AI Assistent
-                        </button>
+                        <button class="btn btn-glass" data-action="import"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Importera</button>
+                        <button class="btn btn-primary" id="openChatBtn"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>AI Assistent</button>
                     </div>
                 </div>
 
-                <!-- Stats Grid -->
                 <div class="stats-grid">
-                    <div class="stat-card total">
-                        <div class="stat-card-icon">
-                            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                        </div>
+                    <div class="stat-card total" data-filter="all">
+                        <div class="stat-card-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
                         <div class="stat-card-value" id="statTotal">0</div>
-                        <div class="stat-card-label">Totalt Kontakter</div>
+                        <div class="stat-card-label">Totalt</div>
                     </div>
-                    <div class="stat-card telenor">
-                        <div class="stat-card-icon">
-                            <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07"/></svg>
-                        </div>
+                    <div class="stat-card telenor" data-filter="telenor">
+                        <div class="stat-card-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07"/></svg></div>
                         <div class="stat-card-value" id="statTelenor">0</div>
                         <div class="stat-card-label">Telenor</div>
                     </div>
-                    <div class="stat-card tele2">
-                        <div class="stat-card-icon">
-                            <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07"/></svg>
-                        </div>
+                    <div class="stat-card tele2" data-filter="tele2">
+                        <div class="stat-card-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07"/></svg></div>
                         <div class="stat-card-value" id="statTele2">0</div>
                         <div class="stat-card-label">Tele2</div>
                     </div>
-                    <div class="stat-card tre">
-                        <div class="stat-card-icon">
-                            <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07"/></svg>
-                        </div>
+                    <div class="stat-card tre" data-filter="tre">
+                        <div class="stat-card-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07"/></svg></div>
                         <div class="stat-card-value" id="statTre">0</div>
                         <div class="stat-card-label">Tre</div>
                     </div>
-                    <div class="stat-card telia">
-                        <div class="stat-card-icon">
-                            <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07"/></svg>
-                        </div>
+                    <div class="stat-card telia" data-filter="telia">
+                        <div class="stat-card-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07"/></svg></div>
                         <div class="stat-card-value" id="statTelia">0</div>
                         <div class="stat-card-label">Telia</div>
                     </div>
                 </div>
 
-                <!-- Recent Activity -->
                 <div class="glass-panel">
                     <div class="panel-header">
-                        <h3 class="panel-title">
-                            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                            Senaste Aktivitet
-                        </h3>
+                        <h3 class="panel-title"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Snabbvy - Senaste kontakter</h3>
                     </div>
-                    <div id="recentActivity" style="padding: 20px;">
+                    <div id="recentContacts" style="padding: 20px;">
                         <div class="empty-state">
-                            <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72"/></svg>
-                            <h3>Ingen aktivitet än</h3>
-                            <p>Importera kontakter och börja logga samtal för att se aktivitet här.</p>
+                            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                            <h3>Inga kontakter</h3>
+                            <p>Importera en CSV-fil för att komma igång.</p>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Contacts View -->
-            <section id="contactsView" class="view" style="display: none;">
+            <!-- Contacts -->
+            <section id="contactsView" class="view" style="display:none;">
                 <div class="header">
-                    <div class="header-left">
-                        <h2>Kontakter</h2>
-                        <p id="contactsSubtitle">Hantera alla dina företagskontakter</p>
-                    </div>
+                    <div class="header-left"><h2>Kontakter</h2><p id="contactsSubtitle">Alla kontakter</p></div>
                     <div class="header-actions">
-                        <button class="btn btn-glass" data-action="export">
-                            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                            Exportera
-                        </button>
-                        <button class="btn btn-primary" data-action="import">
-                            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                            Lägg till
-                        </button>
+                        <button class="btn btn-glass" data-action="export"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Exportera</button>
+                        <button class="btn btn-primary" data-action="import"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Lägg till</button>
                     </div>
                 </div>
 
-                <!-- Search and Filters -->
                 <div class="search-filter-bar">
                     <div class="search-box">
-                        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                        <input type="search" class="search-input" id="searchInput" placeholder="Sök företag, kontakt, nummer..." aria-label="Sök kontakter">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                        <input type="search" class="search-input" id="searchInput" placeholder="Sök företag, kontakt, nummer...">
                     </div>
-                    <select class="filter-select" id="operatorFilter" aria-label="Filtrera efter operatör">
+                    <select class="filter-select" id="operatorFilter">
                         <option value="">Alla operatörer</option>
                         <option value="telenor">Telenor</option>
                         <option value="tele2">Tele2</option>
                         <option value="tre">Tre</option>
                         <option value="telia">Telia</option>
                     </select>
-                    <select class="filter-select" id="statusFilter" aria-label="Filtrera efter status">
-                        <option value="">Alla status</option>
-                        <option value="new">Ny</option>
-                        <option value="contacted">Kontaktad</option>
-                        <option value="followup">Uppföljning</option>
-                        <option value="closed">Avslutad</option>
-                    </select>
-                    <select class="filter-select" id="sortSelect" aria-label="Sortera">
+                    <select class="filter-select" id="sortSelect">
                         <option value="">Sortera efter...</option>
-                        <option value="name-asc">Namn (A-Ö)</option>
-                        <option value="name-desc">Namn (Ö-A)</option>
+                        <option value="name-asc">Namn A-Ö</option>
+                        <option value="name-desc">Namn Ö-A</option>
                         <option value="phones-desc">Flest nummer</option>
-                        <option value="recent">Senast tillagd</option>
+                        <option value="phones-asc">Minst nummer</option>
                     </select>
+                    <button class="btn btn-glass btn-sm" id="clearFilters"><svg viewBox="0 0 24 24" style="width:16px;height:16px"><path d="M3 6h18M6 6v14a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V6"/></svg>Rensa filter</button>
                 </div>
 
-                <!-- Contacts Table -->
                 <div class="glass-panel">
                     <div class="table-container">
-                        <table class="data-table" id="contactsTable" role="grid">
+                        <table class="data-table" id="contactsTable">
                             <thead>
                                 <tr>
-                                    <th scope="col">Företag</th>
-                                    <th scope="col">Org.nr</th>
-                                    <th scope="col">Adress</th>
-                                    <th scope="col">Ort</th>
-                                    <th scope="col">Nummer</th>
-                                    <th scope="col">Användare</th>
-                                    <th scope="col">Operatör</th>
-                                    <th scope="col">Kontakt</th>
-                                    <th scope="col">Roll</th>
-                                    <th scope="col">Status</th>
-                                    <th scope="col">Åtgärder</th>
+                                    <th>Företag</th>
+                                    <th>Org.nr</th>
+                                    <th>Adress</th>
+                                    <th>Ort</th>
+                                    <th>Nummer</th>
+                                    <th>Användare</th>
+                                    <th>Operatör</th>
+                                    <th>Kontakt</th>
+                                    <th>Roll</th>
+                                    <th>Anteckningar</th>
+                                    <th>Åtgärder</th>
                                 </tr>
                             </thead>
-                            <tbody id="contactsTableBody">
-                            </tbody>
+                            <tbody id="contactsTableBody"></tbody>
                         </table>
                     </div>
-                    <div id="emptyContactsState" class="empty-state" style="display: none;">
-                        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="17" y1="11" x2="23" y2="11"/></svg>
+                    <div id="emptyContacts" class="empty-state" style="display:none;">
+                        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
                         <h3>Inga kontakter</h3>
-                        <p>Importera en CSV-fil för att komma igång med din kontakthantering.</p>
-                        <button class="btn btn-primary" data-action="import" style="margin-top: 20px;">
-                            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                            Importera kontakter
-                        </button>
+                        <p>Importera en CSV-fil för att komma igång.</p>
                     </div>
                 </div>
             </section>
 
-            <!-- Calls View -->
-            <section id="callsView" class="view" style="display: none;">
+            <!-- Batches -->
+            <section id="batchesView" class="view" style="display:none;">
                 <div class="header">
-                    <div class="header-left">
-                        <h2>Samtalslogg</h2>
-                        <p>Historik över alla samtal och anteckningar</p>
+                    <div class="header-left"><h2>Importerade Listor</h2><p>Hantera dina uppladdade listor</p></div>
+                    <div class="header-actions">
+                        <button class="btn btn-danger" id="deleteAllBtn"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>Radera alla</button>
+                        <button class="btn btn-primary" data-action="import"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Importera ny</button>
                     </div>
                 </div>
 
                 <div class="glass-panel">
-                    <div class="panel-header">
-                        <h3 class="panel-title">
-                            <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3"/></svg>
-                            Samtalshistorik
-                        </h3>
-                    </div>
-                    <div id="callLogList" style="padding: 20px; max-height: 600px; overflow-y: auto;">
-                    </div>
+                    <div class="panel-header"><h3 class="panel-title"><svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>Importerade listor</h3></div>
+                    <div class="batch-list" id="batchList"></div>
                 </div>
             </section>
         </main>
     </div>
 
     <!-- Import Modal -->
-    <div class="modal-overlay" id="importModal" role="dialog" aria-modal="true" aria-labelledby="importModalTitle">
+    <div class="modal-overlay" id="importModal">
         <div class="modal">
             <div class="modal-header">
-                <h2 class="modal-title" id="importModalTitle">Importera Kontakter</h2>
-                <button class="modal-close" data-close-modal aria-label="Stäng">
-                    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                </button>
+                <h2 class="modal-title">Importera Kontakter</h2>
+                <button class="modal-close" data-close><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
             </div>
             <div class="modal-body">
-                <div class="upload-area" id="uploadArea" role="button" tabindex="0" aria-label="Klicka eller dra för att ladda upp fil">
-                    <div class="upload-icon">
-                        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                    </div>
+                <div class="form-group">
+                    <label class="form-label">Listnamn (valfritt)</label>
+                    <input type="text" class="form-input" id="batchName" placeholder="T.ex. 'December leads' eller 'Stockholm företag'">
+                </div>
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
                     <div class="upload-text">Släpp din CSV-fil här</div>
                     <div class="upload-hint">eller klicka för att välja fil</div>
                     <input type="file" id="fileInput" accept=".csv" hidden>
                 </div>
-                <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-top: 16px; text-align: center;">
-                    Data sparas lokalt i din webbläsare och kan byggas på med fler importer.
-                </p>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-glass" data-close-modal>Avbryt</button>
-                <button class="btn btn-primary" id="processImportBtn" disabled>
-                    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                    Importera
-                </button>
+                <button class="btn btn-glass" data-close>Avbryt</button>
+                <button class="btn btn-primary" id="processImportBtn" disabled><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Importera</button>
             </div>
         </div>
     </div>
 
-    <!-- Call Log Modal -->
-    <div class="modal-overlay" id="callLogModal" role="dialog" aria-modal="true" aria-labelledby="callLogModalTitle">
-        <div class="modal">
-            <div class="modal-header">
-                <h2 class="modal-title" id="callLogModalTitle">Logga Samtal</h2>
-                <button class="modal-close" data-close-modal aria-label="Stäng">
-                    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                </button>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" id="callContactId">
-                <div class="form-group">
-                    <label class="form-label">Företag</label>
-                    <input type="text" class="form-input" id="callCompanyName" readonly>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Samtalstyp</label>
-                    <select class="form-select" id="callType">
-                        <option value="outgoing">Utgående samtal</option>
-                        <option value="incoming">Inkommande samtal</option>
-                        <option value="missed">Missat samtal</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Resultat / Status</label>
-                    <select class="form-select" id="callResult">
-                        <option value="new">Ny (ingen kontakt)</option>
-                        <option value="contacted">Kontaktad</option>
-                        <option value="followup">Kräver uppföljning</option>
-                        <option value="closed">Avslutad</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Anteckningar</label>
-                    <textarea class="form-textarea" id="callNotes" placeholder="Skriv anteckningar från samtalet..."></textarea>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-glass" data-close-modal>Avbryt</button>
-                <button class="btn btn-success" id="saveCallLogBtn">
-                    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                    Spara
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- AI Chat Panel -->
-    <div class="chat-panel" id="chatPanel" role="complementary" aria-label="AI Assistent">
+    <!-- Chat Panel -->
+    <div class="chat-panel" id="chatPanel">
         <div class="chat-header">
             <div class="chat-header-left">
-                <div class="chat-avatar">
-                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
-                </div>
-                <div>
-                    <div class="chat-title">AI Assistent</div>
-                    <div class="chat-subtitle">Powered by Claude</div>
-                </div>
+                <div class="chat-avatar"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg></div>
+                <div><div class="chat-title">AI Assistent</div><div class="chat-subtitle">Powered by Claude</div></div>
             </div>
-            <button class="modal-close" id="closeChatBtn" aria-label="Stäng chat">
-                <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </button>
+            <button class="modal-close" id="closeChatBtn"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
         </div>
         <div class="chat-messages" id="chatMessages">
-            <div class="chat-message assistant">
-                Hej! Jag är din AI-assistent. Jag kan hjälpa dig med frågor om dina kontakter, ge förslag på uppföljningar, eller svara på andra frågor. Vad kan jag hjälpa dig med?
-            </div>
+            <div class="chat-message assistant">Hej! Jag kan hjälpa dig med frågor om dina kontakter, statistik och navigering. Vad kan jag hjälpa dig med?</div>
         </div>
         <div class="chat-input-area">
             <div class="chat-input-wrapper">
                 <input type="text" class="chat-input" id="chatInput" placeholder="Skriv ett meddelande...">
-                <button class="chat-send" id="sendChatBtn" aria-label="Skicka meddelande">
-                    <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                </button>
+                <button class="chat-send" id="sendChatBtn"><svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
             </div>
         </div>
     </div>
 
-    <!-- Chat Toggle Button -->
-    <button class="chat-toggle" id="chatToggleBtn" aria-label="Öppna AI Assistent">
-        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-    </button>
+    <button class="chat-toggle" id="chatToggleBtn"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>
 
     <script>
-        // ==================== DATABASE (IndexedDB) ====================
+        // ========== DATABASE ==========
         class RingoptimaDB {
-            constructor() {
-                this.dbName = 'RingoptimaDB';
-                this.dbVersion = 1;
-                this.db = null;
-            }
+            constructor() { this.dbName = 'RingoptimaDB'; this.dbVersion = 2; this.db = null; }
 
             async init() {
                 return new Promise((resolve, reject) => {
                     const request = indexedDB.open(this.dbName, this.dbVersion);
-
                     request.onerror = () => reject(request.error);
-                    request.onsuccess = () => {
-                        this.db = request.result;
-                        resolve(this.db);
-                    };
-
-                    request.onupgradeneeded = (event) => {
-                        const db = event.target.result;
-
-                        // Contacts store
+                    request.onsuccess = () => { this.db = request.result; resolve(this.db); };
+                    request.onupgradeneeded = (e) => {
+                        const db = e.target.result;
                         if (!db.objectStoreNames.contains('contacts')) {
-                            const contactsStore = db.createObjectStore('contacts', { keyPath: 'id', autoIncrement: true });
-                            contactsStore.createIndex('name', 'name', { unique: false });
-                            contactsStore.createIndex('org', 'org', { unique: false });
-                            contactsStore.createIndex('status', 'status', { unique: false });
-                            contactsStore.createIndex('createdAt', 'createdAt', { unique: false });
+                            const store = db.createObjectStore('contacts', { keyPath: 'id', autoIncrement: true });
+                            store.createIndex('batchId', 'batchId', { unique: false });
                         }
-
-                        // Call logs store
-                        if (!db.objectStoreNames.contains('callLogs')) {
-                            const callsStore = db.createObjectStore('callLogs', { keyPath: 'id', autoIncrement: true });
-                            callsStore.createIndex('contactId', 'contactId', { unique: false });
-                            callsStore.createIndex('timestamp', 'timestamp', { unique: false });
-                        }
-
-                        // Chat history store
-                        if (!db.objectStoreNames.contains('chatHistory')) {
-                            db.createObjectStore('chatHistory', { keyPath: 'id', autoIncrement: true });
+                        if (!db.objectStoreNames.contains('batches')) {
+                            db.createObjectStore('batches', { keyPath: 'id', autoIncrement: true });
                         }
                     };
                 });
             }
 
-            async addContact(contact) {
-                return this._transaction('contacts', 'readwrite', store => {
-                    contact.createdAt = new Date().toISOString();
-                    contact.status = contact.status || 'new';
-                    return store.add(contact);
-                });
-            }
-
-            async addContacts(contacts) {
-                const tx = this.db.transaction('contacts', 'readwrite');
-                const store = tx.objectStore('contacts');
-
-                for (const contact of contacts) {
-                    contact.createdAt = new Date().toISOString();
-                    contact.status = contact.status || 'new';
-                    store.add(contact);
-                }
-
+            async addBatch(batch) {
                 return new Promise((resolve, reject) => {
-                    tx.oncomplete = () => resolve();
-                    tx.onerror = () => reject(tx.error);
-                });
-            }
-
-            async getAllContacts() {
-                return this._transaction('contacts', 'readonly', store => store.getAll());
-            }
-
-            async updateContact(id, updates) {
-                return this._transaction('contacts', 'readwrite', async store => {
-                    const contact = await this._promisify(store.get(id));
-                    if (contact) {
-                        Object.assign(contact, updates);
-                        return store.put(contact);
-                    }
-                });
-            }
-
-            async deleteContact(id) {
-                return this._transaction('contacts', 'readwrite', store => store.delete(id));
-            }
-
-            async addCallLog(log) {
-                log.timestamp = new Date().toISOString();
-                return this._transaction('callLogs', 'readwrite', store => store.add(log));
-            }
-
-            async getAllCallLogs() {
-                return this._transaction('callLogs', 'readonly', store => store.getAll());
-            }
-
-            async getCallLogsByContact(contactId) {
-                return this._transaction('callLogs', 'readonly', store => {
-                    const index = store.index('contactId');
-                    return index.getAll(contactId);
-                });
-            }
-
-            async clearAllData() {
-                const tx = this.db.transaction(['contacts', 'callLogs', 'chatHistory'], 'readwrite');
-                tx.objectStore('contacts').clear();
-                tx.objectStore('callLogs').clear();
-                tx.objectStore('chatHistory').clear();
-                return new Promise((resolve, reject) => {
-                    tx.oncomplete = () => resolve();
-                    tx.onerror = () => reject(tx.error);
-                });
-            }
-
-            _transaction(storeName, mode, callback) {
-                return new Promise((resolve, reject) => {
-                    const tx = this.db.transaction(storeName, mode);
-                    const store = tx.objectStore(storeName);
-                    const result = callback(store);
-
-                    if (result && result.onsuccess !== undefined) {
-                        result.onsuccess = () => resolve(result.result);
-                        result.onerror = () => reject(result.error);
-                    } else {
-                        tx.oncomplete = () => resolve(result);
-                        tx.onerror = () => reject(tx.error);
-                    }
-                });
-            }
-
-            _promisify(request) {
-                return new Promise((resolve, reject) => {
+                    const tx = this.db.transaction('batches', 'readwrite');
+                    const store = tx.objectStore('batches');
+                    batch.createdAt = new Date().toISOString();
+                    const request = store.add(batch);
                     request.onsuccess = () => resolve(request.result);
                     request.onerror = () => reject(request.error);
                 });
             }
-        }
 
-        // ==================== APP STATE ====================
-        const state = {
-            contacts: [],
-            callLogs: [],
-            filteredContacts: [],
-            currentView: 'dashboard',
-            selectedFile: null
-        };
-
-        const db = new RingoptimaDB();
-
-        // ==================== DOM ELEMENTS ====================
-        const elements = {
-            sidebar: document.getElementById('sidebar'),
-            mobileMenuBtn: document.getElementById('mobileMenuBtn'),
-            navItems: document.querySelectorAll('.nav-item[data-view]'),
-            actionBtns: document.querySelectorAll('[data-action]'),
-            views: document.querySelectorAll('.view'),
-
-            // Stats
-            statTotal: document.getElementById('statTotal'),
-            statTelenor: document.getElementById('statTelenor'),
-            statTele2: document.getElementById('statTele2'),
-            statTre: document.getElementById('statTre'),
-            statTelia: document.getElementById('statTelia'),
-            contactCount: document.getElementById('contactCount'),
-            sidebarTotalContacts: document.getElementById('sidebarTotalContacts'),
-            sidebarCallsToday: document.getElementById('sidebarCallsToday'),
-            sidebarFollowups: document.getElementById('sidebarFollowups'),
-
-            // Contacts
-            searchInput: document.getElementById('searchInput'),
-            operatorFilter: document.getElementById('operatorFilter'),
-            statusFilter: document.getElementById('statusFilter'),
-            sortSelect: document.getElementById('sortSelect'),
-            contactsTableBody: document.getElementById('contactsTableBody'),
-            emptyContactsState: document.getElementById('emptyContactsState'),
-            contactsSubtitle: document.getElementById('contactsSubtitle'),
-
-            // Import Modal
-            importModal: document.getElementById('importModal'),
-            uploadArea: document.getElementById('uploadArea'),
-            fileInput: document.getElementById('fileInput'),
-            processImportBtn: document.getElementById('processImportBtn'),
-
-            // Call Log Modal
-            callLogModal: document.getElementById('callLogModal'),
-            callContactId: document.getElementById('callContactId'),
-            callCompanyName: document.getElementById('callCompanyName'),
-            callType: document.getElementById('callType'),
-            callResult: document.getElementById('callResult'),
-            callNotes: document.getElementById('callNotes'),
-            saveCallLogBtn: document.getElementById('saveCallLogBtn'),
-
-            // Call Log List
-            callLogList: document.getElementById('callLogList'),
-
-            // Chat
-            chatPanel: document.getElementById('chatPanel'),
-            chatToggleBtn: document.getElementById('chatToggleBtn'),
-            openChatBtn: document.getElementById('openChatBtn'),
-            closeChatBtn: document.getElementById('closeChatBtn'),
-            chatMessages: document.getElementById('chatMessages'),
-            chatInput: document.getElementById('chatInput'),
-            sendChatBtn: document.getElementById('sendChatBtn'),
-
-            // Recent Activity
-            recentActivity: document.getElementById('recentActivity'),
-
-            // Toast
-            toastContainer: document.getElementById('toastContainer')
-        };
-
-        // ==================== UTILITIES ====================
-        function showToast(message, type = 'success') {
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.innerHTML = `
-                <div class="toast-icon">
-                    <svg viewBox="0 0 24 24">
-                        ${type === 'success' ? '<polyline points="20 6 9 17 4 12"/>' :
-                          type === 'error' ? '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>' :
-                          '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>'}
-                    </svg>
-                </div>
-                <span class="toast-message">${message}</span>
-            `;
-            elements.toastContainer.appendChild(toast);
-
-            requestAnimationFrame(() => toast.classList.add('show'));
-
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
-
-        function animateNumber(element, target, duration = 800) {
-            const start = parseInt(element.textContent) || 0;
-            const range = target - start;
-            const startTime = performance.now();
-
-            function update(currentTime) {
-                const elapsed = currentTime - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                const eased = 1 - Math.pow(1 - progress, 3);
-                element.textContent = Math.floor(start + range * eased);
-
-                if (progress < 1) {
-                    requestAnimationFrame(update);
-                }
+            async getAllBatches() {
+                return new Promise((resolve, reject) => {
+                    const tx = this.db.transaction('batches', 'readonly');
+                    const request = tx.objectStore('batches').getAll();
+                    request.onsuccess = () => resolve(request.result);
+                    request.onerror = () => reject(request.error);
+                });
             }
 
+            async deleteBatch(batchId) {
+                const tx = this.db.transaction(['batches', 'contacts'], 'readwrite');
+                tx.objectStore('batches').delete(batchId);
+                const contactStore = tx.objectStore('contacts');
+                const index = contactStore.index('batchId');
+                const request = index.openCursor(IDBKeyRange.only(batchId));
+                request.onsuccess = (e) => {
+                    const cursor = e.target.result;
+                    if (cursor) { cursor.delete(); cursor.continue(); }
+                };
+                return new Promise((resolve, reject) => {
+                    tx.oncomplete = () => resolve();
+                    tx.onerror = () => reject(tx.error);
+                });
+            }
+
+            async addContacts(contacts, batchId) {
+                const tx = this.db.transaction('contacts', 'readwrite');
+                const store = tx.objectStore('contacts');
+                contacts.forEach(c => { c.batchId = batchId; c.createdAt = new Date().toISOString(); c.notes = ''; store.add(c); });
+                return new Promise((resolve, reject) => { tx.oncomplete = () => resolve(); tx.onerror = () => reject(tx.error); });
+            }
+
+            async getAllContacts() {
+                return new Promise((resolve, reject) => {
+                    const tx = this.db.transaction('contacts', 'readonly');
+                    const request = tx.objectStore('contacts').getAll();
+                    request.onsuccess = () => resolve(request.result);
+                    request.onerror = () => reject(request.error);
+                });
+            }
+
+            async updateContact(id, updates) {
+                return new Promise((resolve, reject) => {
+                    const tx = this.db.transaction('contacts', 'readwrite');
+                    const store = tx.objectStore('contacts');
+                    const getReq = store.get(id);
+                    getReq.onsuccess = () => {
+                        const contact = getReq.result;
+                        if (contact) { Object.assign(contact, updates); store.put(contact); }
+                    };
+                    tx.oncomplete = () => resolve();
+                    tx.onerror = () => reject(tx.error);
+                });
+            }
+
+            async deleteContact(id) {
+                return new Promise((resolve, reject) => {
+                    const tx = this.db.transaction('contacts', 'readwrite');
+                    tx.objectStore('contacts').delete(id);
+                    tx.oncomplete = () => resolve();
+                    tx.onerror = () => reject(tx.error);
+                });
+            }
+
+            async clearAll() {
+                const tx = this.db.transaction(['contacts', 'batches'], 'readwrite');
+                tx.objectStore('contacts').clear();
+                tx.objectStore('batches').clear();
+                return new Promise((resolve, reject) => { tx.oncomplete = () => resolve(); tx.onerror = () => reject(tx.error); });
+            }
+        }
+
+        // ========== STATE ==========
+        const state = { contacts: [], batches: [], filteredContacts: [], selectedFile: null, currentView: 'dashboard' };
+        const db = new RingoptimaDB();
+
+        // ========== UTILITIES ==========
+        function showToast(msg, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<div class="toast-icon"><svg viewBox="0 0 24 24">${type === 'success' ? '<polyline points="20 6 9 17 4 12"/>' : '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>'}</svg></div><span class="toast-message">${msg}</span>`;
+            document.getElementById('toastContainer').appendChild(toast);
+            requestAnimationFrame(() => toast.classList.add('show'));
+            setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
+        }
+
+        function animateNumber(el, target, dur = 800) {
+            const start = parseInt(el.textContent) || 0;
+            const range = target - start;
+            const startTime = performance.now();
+            function update(time) {
+                const progress = Math.min((time - startTime) / dur, 1);
+                el.textContent = Math.floor(start + range * (1 - Math.pow(1 - progress, 3)));
+                if (progress < 1) requestAnimationFrame(update);
+            }
             requestAnimationFrame(update);
         }
 
-        function formatDate(isoString) {
-            const date = new Date(isoString);
-            return date.toLocaleDateString('sv-SE', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        }
+        function escapeHtml(text) { if (!text) return ''; const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
 
-        // ==================== CSV PARSING ====================
+        function formatDate(iso) { return new Date(iso).toLocaleDateString('sv-SE', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }); }
+
+        // ========== CSV PARSING ==========
         function parseCSV(text) {
-            const lines = text.split('\n');
-            const result = [];
-            let currentLine = '';
-            let inQuotes = false;
-
+            const lines = text.split('\n'); const result = []; let currentLine = ''; let inQuotes = false;
             for (let line of lines) {
                 currentLine += line;
-                const quoteCount = (currentLine.match(/"/g) || []).length;
-                inQuotes = quoteCount % 2 !== 0;
-
+                inQuotes = ((currentLine.match(/"/g) || []).length % 2 !== 0);
                 if (!inQuotes) {
-                    const row = [];
-                    let cell = '';
-                    let insideQuote = false;
-
-                    for (let i = 0; i < currentLine.length; i++) {
-                        const char = currentLine[i];
-                        if (char === '"') {
-                            insideQuote = !insideQuote;
-                        } else if (char === ',' && !insideQuote) {
-                            row.push(cell);
-                            cell = '';
-                        } else {
-                            cell += char;
-                        }
+                    const row = []; let cell = ''; let inside = false;
+                    for (let char of currentLine) {
+                        if (char === '"') inside = !inside;
+                        else if (char === ',' && !inside) { row.push(cell); cell = ''; }
+                        else cell += char;
                     }
                     row.push(cell);
-                    if (row.some(c => c.trim())) {
-                        result.push(row);
-                    }
+                    if (row.some(c => c.trim())) result.push(row);
                     currentLine = '';
-                } else {
-                    currentLine += '\n';
-                }
+                } else currentLine += '\n';
             }
             return result;
         }
 
-        function extractDataFromText(simplePhone, phoneDataText, styrelseText) {
-            const numbers = [];
-            const users = [];
-            const operators = [];
-            let kontakt = '';
-            let roll = '';
+        function extractData(simplePhone, phoneData, styrelse) {
+            const numbers = [], users = [], operators = [];
+            let kontakt = '', roll = '';
 
-            if (phoneDataText) {
-                const lines = phoneDataText.split('\n');
+            if (phoneData) {
                 const phonePattern = /^0\d{1,3}[-\s]?[\d\s]{4,}/;
-
-                for (let line of lines) {
+                for (let line of phoneData.split('\n')) {
                     line = line.trim();
-                    if (line.startsWith('Telefonnummer') || line.startsWith('Är det ditt') ||
-                        line.startsWith('Info') || line.startsWith('Information om') ||
-                        line.startsWith('Andra format') || line.startsWith('Nyhet') ||
-                        line.startsWith('Hittar du') || line.startsWith('Lås upp') ||
-                        line.startsWith('Köp för') || line.length === 0 || line.startsWith('+46')) {
-                        continue;
-                    }
-
+                    if (!line || line.startsWith('Telefonnummer') || line.startsWith('Är det') || line.startsWith('Info') || line.startsWith('+46')) continue;
                     if (phonePattern.test(line)) {
                         let parts = line.split('\t').filter(p => p.trim());
-                        if (parts.length < 3) {
-                            parts = line.split(/\s{4,}/).filter(p => p.trim());
-                        }
-                        if (parts.length < 3) {
-                            parts = line.split(/\s{2,}/).filter(p => p.trim());
-                        }
-
+                        if (parts.length < 3) parts = line.split(/\s{4,}/).filter(p => p.trim());
+                        if (parts.length < 3) parts = line.split(/\s{2,}/).filter(p => p.trim());
                         if (parts.length >= 3) {
-                            const phone = parts[0].trim();
-                            const user = parts[1].trim();
-                            let operator = parts[2].trim()
-                                .replace(/\s*\(mobile\)/gi, '')
-                                .replace(/\s*\(fix\)/gi, '');
-
-                            if (phone) numbers.push(phone);
-                            if (user) users.push(user);
-                            if (operator && !operator.toLowerCase().includes('kontakta oss')) {
-                                operators.push(operator);
-                            }
-                        } else if (parts.length >= 1) {
                             numbers.push(parts[0].trim());
-                        }
+                            users.push(parts[1].trim());
+                            let op = parts[2].trim().replace(/\s*\(mobile\)/gi, '').replace(/\s*\(fix\)/gi, '');
+                            if (op && !op.toLowerCase().includes('kontakta')) operators.push(op);
+                        } else if (parts.length >= 1) numbers.push(parts[0].trim());
                     }
                 }
             }
+            if (numbers.length === 0 && simplePhone?.trim() && /^0\d{1,3}[-\s]?[\d\s]{4,}/.test(simplePhone)) numbers.push(simplePhone.trim());
 
-            if (numbers.length === 0 && simplePhone && simplePhone.trim()) {
-                const cleanPhone = simplePhone.trim();
-                if (/^0\d{1,3}[-\s]?[\d\s]{4,}/.test(cleanPhone)) {
-                    numbers.push(cleanPhone);
-                }
-            }
-
-            if (styrelseText) {
-                const rolePatterns = [
-                    { pattern: /Verkställande direktör[:\t\s]+([^\n\t]+)/i, role: 'Verkställande direktör' },
-                    { pattern: /Extern verkställande direktör[:\t\s]+([^\n\t]+)/i, role: 'Extern verkställande direktör' },
-                    { pattern: /Ordförande[:\t\s]+([^\n\t]+)/i, role: 'Ordförande' },
-                    { pattern: /Styrelseledamot[:\t\s]+([^\n\t]+)/i, role: 'Styrelseledamot' },
-                    { pattern: /Styrelsesuppleant[:\t\s]+([^\n\t]+)/i, role: 'Styrelsesuppleant' }
+            if (styrelse) {
+                const patterns = [
+                    [/Verkställande direktör[:\t\s]+([^\n\t]+)/i, 'Verkställande direktör'],
+                    [/Extern verkställande direktör[:\t\s]+([^\n\t]+)/i, 'Extern VD'],
+                    [/Ordförande[:\t\s]+([^\n\t]+)/i, 'Ordförande'],
+                    [/Styrelseledamot[:\t\s]+([^\n\t]+)/i, 'Styrelseledamot'],
+                    [/Styrelsesuppleant[:\t\s]+([^\n\t]+)/i, 'Styrelsesuppleant']
                 ];
-
-                for (const { pattern, role: r } of rolePatterns) {
-                    const match = styrelseText.match(pattern);
-                    if (match) {
-                        let name = match[1].trim().split('\t')[0].trim();
-                        if (name && !name.toLowerCase().includes('lägg till') && !name.toLowerCase().includes('e-post')) {
-                            kontakt = name;
-                            roll = r;
-                            break;
-                        }
-                    }
+                for (const [pat, r] of patterns) {
+                    const m = styrelse.match(pat);
+                    if (m) { let name = m[1].trim().split('\t')[0].trim(); if (name && !name.toLowerCase().includes('lägg till')) { kontakt = name; roll = r; break; } }
                 }
             }
-
-            return {
-                numbers: numbers.join('\n'),
-                users: users.join('\n'),
-                operators: operators.join('\n'),
-                kontakt,
-                roll
-            };
+            return { phones: numbers.join('\n'), users: users.join('\n'), operators: operators.join('\n'), contact: kontakt, role: roll };
         }
 
-        function transformCSVData(rows) {
-            if (rows.length === 0) return [];
-
+        function transformCSV(rows) {
             const contacts = [];
-
             for (let i = 1; i < rows.length; i++) {
-                const row = rows[i];
-                if (row.length < 3 || !row[0] || row[0].trim() === '') continue;
-
-                const namn = (row[0] || '').trim();
-                const org = (row[1] || '').trim();
-                const adress = (row[2] || '').trim();
-                const ort = (row[3] || '').trim();
-                const telefonText = row[4] || '';
-                const operatorText = row[5] || '';
-                const styrelseText = row[6] || '';
-
-                const extracted = extractDataFromText(telefonText, operatorText, styrelseText);
-
-                contacts.push({
-                    name: namn,
-                    org: org,
-                    address: adress,
-                    city: ort,
-                    phones: extracted.numbers,
-                    users: extracted.users,
-                    operators: extracted.operators,
-                    contact: extracted.kontakt,
-                    role: extracted.roll,
-                    status: 'new'
-                });
+                const r = rows[i];
+                if (r.length < 3 || !r[0]?.trim()) continue;
+                const ex = extractData(r[4] || '', r[5] || '', r[6] || '');
+                contacts.push({ name: r[0].trim(), org: (r[1] || '').trim(), address: (r[2] || '').trim(), city: (r[3] || '').trim(), ...ex });
             }
-
             return contacts;
         }
 
-        // ==================== UI UPDATES ====================
+        // ========== UI UPDATES ==========
         function updateStats() {
             const total = state.contacts.length;
             let telenor = 0, tele2 = 0, tre = 0, telia = 0;
-
             state.contacts.forEach(c => {
                 const ops = (c.operators || '').toLowerCase();
                 if (ops.includes('telenor')) telenor++;
@@ -2177,112 +716,56 @@
                 if (ops.includes('hi3g') || ops.includes('tre')) tre++;
                 if (ops.includes('telia')) telia++;
             });
-
-            animateNumber(elements.statTotal, total);
-            animateNumber(elements.statTelenor, telenor);
-            animateNumber(elements.statTele2, tele2);
-            animateNumber(elements.statTre, tre);
-            animateNumber(elements.statTelia, telia);
-
-            elements.contactCount.textContent = total;
-            elements.sidebarTotalContacts.textContent = total;
-
-            // Count followups
-            const followups = state.contacts.filter(c => c.status === 'followup').length;
-            elements.sidebarFollowups.textContent = followups;
-
-            // Count calls today
-            const today = new Date().toDateString();
-            const callsToday = state.callLogs.filter(log =>
-                new Date(log.timestamp).toDateString() === today
-            ).length;
-            elements.sidebarCallsToday.textContent = callsToday;
-        }
-
-        function getStatusBadge(status) {
-            const labels = {
-                new: 'Ny',
-                contacted: 'Kontaktad',
-                followup: 'Uppföljning',
-                closed: 'Avslutad'
-            };
-            return `<span class="status-badge ${status}"><span class="status-dot"></span>${labels[status] || status}</span>`;
+            animateNumber(document.getElementById('statTotal'), total);
+            animateNumber(document.getElementById('statTelenor'), telenor);
+            animateNumber(document.getElementById('statTele2'), tele2);
+            animateNumber(document.getElementById('statTre'), tre);
+            animateNumber(document.getElementById('statTelia'), telia);
+            document.getElementById('contactCount').textContent = total;
+            document.getElementById('sidebarTotal').textContent = total;
+            document.getElementById('sidebarBatches').textContent = state.batches.length;
         }
 
         function renderContacts() {
             let contacts = [...state.contacts];
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const opFilter = document.getElementById('operatorFilter').value;
+            const sort = document.getElementById('sortSelect').value;
 
-            // Apply search filter
-            const searchTerm = elements.searchInput.value.toLowerCase();
-            if (searchTerm) {
-                contacts = contacts.filter(c =>
-                    c.name.toLowerCase().includes(searchTerm) ||
-                    c.org.toLowerCase().includes(searchTerm) ||
-                    c.phones.toLowerCase().includes(searchTerm) ||
-                    c.contact.toLowerCase().includes(searchTerm)
-                );
-            }
+            if (search) contacts = contacts.filter(c => c.name.toLowerCase().includes(search) || c.org.includes(search) || c.phones.includes(search) || c.contact.toLowerCase().includes(search));
 
-            // Apply operator filter
-            const opFilter = elements.operatorFilter.value;
             if (opFilter) {
-                const opMap = {
-                    telenor: ['telenor'],
-                    tele2: ['tele2'],
-                    tre: ['hi3g', 'tre', '3'],
-                    telia: ['telia', 'teliasonera']
-                };
-                contacts = contacts.filter(c => {
-                    const ops = c.operators.toLowerCase();
-                    return opMap[opFilter]?.some(term => ops.includes(term));
-                });
+                const map = { telenor: ['telenor'], tele2: ['tele2'], tre: ['hi3g', 'tre'], telia: ['telia', 'teliasonera'] };
+                contacts = contacts.filter(c => map[opFilter]?.some(t => c.operators.toLowerCase().includes(t)));
             }
 
-            // Apply status filter
-            const statusFilter = elements.statusFilter.value;
-            if (statusFilter) {
-                contacts = contacts.filter(c => c.status === statusFilter);
-            }
-
-            // Apply sorting
-            const sortValue = elements.sortSelect.value;
-            if (sortValue) {
+            if (sort) {
                 contacts.sort((a, b) => {
-                    switch (sortValue) {
-                        case 'name-asc':
-                            return a.name.localeCompare(b.name, 'sv');
-                        case 'name-desc':
-                            return b.name.localeCompare(a.name, 'sv');
-                        case 'phones-desc':
-                            return b.phones.split('\n').length - a.phones.split('\n').length;
-                        case 'recent':
-                            return new Date(b.createdAt) - new Date(a.createdAt);
-                        default:
-                            return 0;
-                    }
+                    if (sort === 'name-asc') return a.name.localeCompare(b.name, 'sv');
+                    if (sort === 'name-desc') return b.name.localeCompare(a.name, 'sv');
+                    if (sort === 'phones-desc') return b.phones.split('\n').filter(p=>p).length - a.phones.split('\n').filter(p=>p).length;
+                    if (sort === 'phones-asc') return a.phones.split('\n').filter(p=>p).length - b.phones.split('\n').filter(p=>p).length;
+                    return 0;
                 });
             }
 
             state.filteredContacts = contacts;
-            elements.contactsSubtitle.textContent = `Visar ${contacts.length} av ${state.contacts.length} kontakter`;
+            document.getElementById('contactsSubtitle').textContent = `Visar ${contacts.length} av ${state.contacts.length} kontakter`;
+
+            const tbody = document.getElementById('contactsTableBody');
+            const empty = document.getElementById('emptyContacts');
 
             if (contacts.length === 0) {
-                elements.contactsTableBody.innerHTML = '';
-                elements.emptyContactsState.style.display = state.contacts.length === 0 ? 'block' : 'none';
-                if (state.contacts.length > 0) {
-                    elements.contactsTableBody.innerHTML = `
-                        <tr><td colspan="11" style="text-align: center; padding: 40px; color: rgba(255,255,255,0.7);">
-                            Inga kontakter matchar din sökning
-                        </td></tr>
-                    `;
-                }
+                tbody.innerHTML = '';
+                empty.style.display = state.contacts.length === 0 ? 'block' : 'none';
+                if (state.contacts.length > 0) tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;padding:40px;color:rgba(255,255,255,0.7)">Inga kontakter matchar din sökning</td></tr>';
                 return;
             }
 
-            elements.emptyContactsState.style.display = 'none';
-            elements.contactsTableBody.innerHTML = contacts.map(c => `
+            empty.style.display = 'none';
+            tbody.innerHTML = contacts.map(c => `
                 <tr data-id="${c.id}">
-                    <td class="cell-company">${escapeHtml(c.name)}</td>
+                    <td class="cell-company" title="${escapeHtml(c.name)}">${escapeHtml(c.name)}</td>
                     <td>${escapeHtml(c.org)}</td>
                     <td>${escapeHtml(c.address)}</td>
                     <td>${escapeHtml(c.city)}</td>
@@ -2291,428 +774,317 @@
                     <td class="cell-multiline">${escapeHtml(c.operators)}</td>
                     <td>${escapeHtml(c.contact)}</td>
                     <td>${escapeHtml(c.role)}</td>
-                    <td class="cell-status">${getStatusBadge(c.status)}</td>
+                    <td class="inline-note"><textarea placeholder="Anteckningar..." data-id="${c.id}">${escapeHtml(c.notes || '')}</textarea></td>
                     <td>
                         <div class="row-actions">
-                            <button class="action-btn call" title="Ring" data-action="call" data-id="${c.id}">
-                                <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72"/></svg>
-                            </button>
-                            <button class="action-btn log" title="Logga samtal" data-action="log" data-id="${c.id}">
-                                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                            </button>
-                            <button class="action-btn delete" title="Ta bort" data-action="delete" data-id="${c.id}">
-                                <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                            </button>
+                            <button class="action-btn call" title="Ring" data-call="${c.id}"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3"/></svg></button>
+                            <button class="action-btn delete" title="Radera" data-delete="${c.id}"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button>
                         </div>
                     </td>
                 </tr>
             `).join('');
         }
 
-        function renderCallLogs() {
-            if (state.callLogs.length === 0) {
-                elements.callLogList.innerHTML = `
-                    <div class="empty-state">
-                        <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3"/></svg>
-                        <h3>Inga samtal loggade</h3>
-                        <p>Logga samtal från kontaktvyn för att se dem här.</p>
-                    </div>
-                `;
+        function renderBatches() {
+            const list = document.getElementById('batchList');
+            if (state.batches.length === 0) {
+                list.innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg><h3>Inga listor</h3><p>Importera en CSV-fil för att skapa din första lista.</p></div>';
                 return;
             }
-
-            const sortedLogs = [...state.callLogs].sort((a, b) =>
-                new Date(b.timestamp) - new Date(a.timestamp)
-            );
-
-            elements.callLogList.innerHTML = sortedLogs.map(log => {
-                const contact = state.contacts.find(c => c.id === log.contactId);
+            list.innerHTML = state.batches.map(b => {
+                const count = state.contacts.filter(c => c.batchId === b.id).length;
                 return `
-                    <div class="call-log-item ${log.type}">
-                        <div class="call-log-header">
-                            <span class="call-log-company">${escapeHtml(contact?.name || 'Okänd')}</span>
-                            <span class="call-log-time">${formatDate(log.timestamp)}</span>
+                    <div class="batch-item">
+                        <div class="batch-info">
+                            <div class="batch-name">${escapeHtml(b.name || 'Namnlös lista')}</div>
+                            <div class="batch-meta">${count} kontakter - Importerad ${formatDate(b.createdAt)}</div>
                         </div>
-                        <div class="call-log-notes">${escapeHtml(log.notes) || 'Inga anteckningar'}</div>
+                        <div class="batch-actions">
+                            <button class="btn btn-sm btn-glass" data-view-batch="${b.id}">Visa</button>
+                            <button class="btn btn-sm btn-danger" data-delete-batch="${b.id}">Radera</button>
+                        </div>
                     </div>
                 `;
             }).join('');
         }
 
-        function renderRecentActivity() {
-            const recentLogs = [...state.callLogs]
-                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-                .slice(0, 5);
-
-            if (recentLogs.length === 0) {
-                elements.recentActivity.innerHTML = `
-                    <div class="empty-state">
-                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                        <h3>Ingen aktivitet än</h3>
-                        <p>Importera kontakter och börja logga samtal för att se aktivitet här.</p>
-                    </div>
-                `;
+        function renderRecentContacts() {
+            const recent = [...state.contacts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 5);
+            const el = document.getElementById('recentContacts');
+            if (recent.length === 0) {
+                el.innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><h3>Inga kontakter</h3><p>Importera en CSV-fil för att komma igång.</p></div>';
                 return;
             }
-
-            elements.recentActivity.innerHTML = recentLogs.map(log => {
-                const contact = state.contacts.find(c => c.id === log.contactId);
-                return `
-                    <div class="call-log-item ${log.type}">
-                        <div class="call-log-header">
-                            <span class="call-log-company">${escapeHtml(contact?.name || 'Okänd')}</span>
-                            <span class="call-log-time">${formatDate(log.timestamp)}</span>
-                        </div>
-                        <div class="call-log-notes">${escapeHtml(log.notes) || 'Inga anteckningar'}</div>
-                    </div>
-                `;
-            }).join('');
+            el.innerHTML = '<table class="data-table" style="min-width:auto"><thead><tr><th>Företag</th><th>Kontakt</th><th>Roll</th><th>Nummer</th></tr></thead><tbody>' +
+                recent.map(c => `<tr><td>${escapeHtml(c.name)}</td><td>${escapeHtml(c.contact)}</td><td>${escapeHtml(c.role)}</td><td>${escapeHtml(c.phones.split('\n')[0])}</td></tr>`).join('') +
+                '</tbody></table>';
         }
 
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
+        // ========== VIEW MANAGEMENT ==========
+        function switchView(view, filter = null) {
+            state.currentView = view;
+            document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
+            document.getElementById(`${view}View`).style.display = 'block';
+            document.querySelectorAll('.nav-item[data-view]').forEach(n => n.classList.toggle('active', n.dataset.view === view));
+            document.getElementById('sidebar').classList.remove('open');
 
-        // ==================== VIEW MANAGEMENT ====================
-        function switchView(viewName) {
-            state.currentView = viewName;
-
-            elements.views.forEach(view => {
-                view.style.display = view.id === `${viewName}View` ? 'block' : 'none';
-            });
-
-            elements.navItems.forEach(item => {
-                item.classList.toggle('active', item.dataset.view === viewName);
-            });
-
-            // Close mobile sidebar
-            elements.sidebar.classList.remove('open');
-        }
-
-        // ==================== MODAL MANAGEMENT ====================
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        function closeAllModals() {
-            document.querySelectorAll('.modal-overlay').forEach(modal => {
-                modal.classList.remove('active');
-            });
-            document.body.style.overflow = '';
-        }
-
-        // ==================== EVENT HANDLERS ====================
-        async function handleFileUpload(file) {
-            if (!file || !file.name.endsWith('.csv')) {
-                showToast('Välj en CSV-fil', 'error');
-                return;
+            if (view === 'contacts' && filter) {
+                document.getElementById('operatorFilter').value = filter === 'all' ? '' : filter;
+                renderContacts();
             }
-
-            state.selectedFile = file;
-            elements.uploadArea.querySelector('.upload-text').textContent = file.name;
-            elements.uploadArea.querySelector('.upload-hint').textContent = 'Klicka "Importera" för att fortsätta';
-            elements.processImportBtn.disabled = false;
         }
 
-        async function processImport() {
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+        // ========== EVENT HANDLERS ==========
+        async function handleImport() {
             if (!state.selectedFile) return;
-
             try {
                 const text = await state.selectedFile.text();
                 const rows = parseCSV(text);
-                const contacts = transformCSVData(rows);
+                const contacts = transformCSV(rows);
+                if (contacts.length === 0) { showToast('Inga kontakter hittades', 'error'); return; }
 
-                if (contacts.length === 0) {
-                    showToast('Inga kontakter hittades i filen', 'error');
-                    return;
-                }
+                const batchName = document.getElementById('batchName').value.trim() || state.selectedFile.name;
+                const batchId = await db.addBatch({ name: batchName, fileName: state.selectedFile.name, count: contacts.length });
+                await db.addContacts(contacts, batchId);
 
-                await db.addContacts(contacts);
                 state.contacts = await db.getAllContacts();
+                state.batches = await db.getAllBatches();
 
-                updateStats();
-                renderContacts();
-                renderRecentActivity();
+                updateStats(); renderContacts(); renderBatches(); renderRecentContacts();
                 closeModal('importModal');
+                showToast(`${contacts.length} kontakter importerade!`);
 
-                showToast(`${contacts.length} kontakter importerade!`, 'success');
-
-                // Reset upload area
+                // Reset
                 state.selectedFile = null;
-                elements.uploadArea.querySelector('.upload-text').textContent = 'Släpp din CSV-fil här';
-                elements.uploadArea.querySelector('.upload-hint').textContent = 'eller klicka för att välja fil';
-                elements.processImportBtn.disabled = true;
-
-            } catch (error) {
-                console.error('Import error:', error);
-                showToast('Fel vid import: ' + error.message, 'error');
-            }
+                document.getElementById('batchName').value = '';
+                document.getElementById('uploadArea').querySelector('.upload-text').textContent = 'Släpp din CSV-fil här';
+                document.getElementById('processImportBtn').disabled = true;
+            } catch (e) { showToast('Fel: ' + e.message, 'error'); }
         }
 
-        async function handleRowAction(action, id) {
-            const contact = state.contacts.find(c => c.id === parseInt(id));
-            if (!contact) return;
-
-            switch (action) {
-                case 'call':
-                    // Open phone dialer with first number
-                    const firstPhone = contact.phones.split('\n')[0];
-                    if (firstPhone) {
-                        window.open(`tel:${firstPhone.replace(/\s/g, '')}`, '_self');
-                    }
-                    break;
-
-                case 'log':
-                    elements.callContactId.value = contact.id;
-                    elements.callCompanyName.value = contact.name;
-                    elements.callResult.value = contact.status || 'new';
-                    elements.callNotes.value = '';
-                    openModal('callLogModal');
-                    break;
-
-                case 'delete':
-                    if (confirm(`Ta bort ${contact.name}?`)) {
-                        await db.deleteContact(contact.id);
-                        state.contacts = await db.getAllContacts();
-                        updateStats();
-                        renderContacts();
-                        showToast('Kontakt borttagen', 'info');
-                    }
-                    break;
-            }
-        }
-
-        async function saveCallLog() {
-            const contactId = parseInt(elements.callContactId.value);
-            const type = elements.callType.value;
-            const result = elements.callResult.value;
-            const notes = elements.callNotes.value.trim();
-
-            // Add call log
-            await db.addCallLog({
-                contactId,
-                type,
-                result,
-                notes
-            });
-
-            // Update contact status
-            await db.updateContact(contactId, { status: result });
-
-            // Refresh data
+        async function handleDeleteContact(id) {
+            if (!confirm('Radera denna kontakt?')) return;
+            await db.deleteContact(id);
             state.contacts = await db.getAllContacts();
-            state.callLogs = await db.getAllCallLogs();
-
-            updateStats();
-            renderContacts();
-            renderCallLogs();
-            renderRecentActivity();
-            closeModal('callLogModal');
-
-            showToast('Samtal loggat!', 'success');
+            updateStats(); renderContacts(); renderRecentContacts();
+            showToast('Kontakt raderad', 'info');
         }
 
-        async function exportCSV() {
-            const contacts = state.filteredContacts.length > 0 ? state.filteredContacts : state.contacts;
+        async function handleDeleteBatch(id) {
+            const batch = state.batches.find(b => b.id === id);
+            if (!confirm(`Radera listan "${batch?.name}" och alla dess kontakter?`)) return;
+            await db.deleteBatch(id);
+            state.contacts = await db.getAllContacts();
+            state.batches = await db.getAllBatches();
+            updateStats(); renderContacts(); renderBatches(); renderRecentContacts();
+            showToast('Lista raderad', 'info');
+        }
 
-            if (contacts.length === 0) {
-                showToast('Inga kontakter att exportera', 'error');
-                return;
-            }
+        async function handleDeleteAll() {
+            if (!confirm('Radera ALLA listor och kontakter? Detta kan inte ångras.')) return;
+            await db.clearAll();
+            state.contacts = []; state.batches = [];
+            updateStats(); renderContacts(); renderBatches(); renderRecentContacts();
+            showToast('Allt raderat', 'info');
+        }
 
-            const headers = ['NAMN', 'ORG', 'ADRESS', 'ORT', 'NUMMER', 'ANVÄNDARE', 'OPERATÖR', 'KONTAKT', 'ROLL', 'STATUS'];
-            const rows = contacts.map(c => [
-                c.name, c.org, c.address, c.city, c.phones, c.users, c.operators, c.contact, c.role, c.status
-            ]);
+        async function saveNote(id, note) {
+            await db.updateContact(id, { notes: note });
+            const contact = state.contacts.find(c => c.id === id);
+            if (contact) contact.notes = note;
+        }
 
-            const csvContent = [headers, ...rows].map(row =>
-                row.map(cell => {
-                    if (cell && (cell.includes(',') || cell.includes('\n') || cell.includes('"'))) {
-                        return '"' + cell.replace(/"/g, '""') + '"';
-                    }
-                    return cell || '';
-                }).join(',')
-            ).join('\n');
-
-            const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+        function exportCSV() {
+            const contacts = state.filteredContacts.length ? state.filteredContacts : state.contacts;
+            if (!contacts.length) { showToast('Inga kontakter att exportera', 'error'); return; }
+            const headers = ['NAMN', 'ORG', 'ADRESS', 'ORT', 'NUMMER', 'ANVÄNDARE', 'OPERATÖR', 'KONTAKT', 'ROLL', 'ANTECKNINGAR'];
+            const rows = contacts.map(c => [c.name, c.org, c.address, c.city, c.phones, c.users, c.operators, c.contact, c.role, c.notes || '']);
+            const csv = [headers, ...rows].map(r => r.map(cell => cell?.includes(',') || cell?.includes('\n') ? `"${cell.replace(/"/g, '""')}"` : cell || '').join(',')).join('\n');
+            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = `ringoptima_export_${new Date().toISOString().slice(0,10)}.csv`;
+            link.download = `ringoptima_${new Date().toISOString().slice(0,10)}.csv`;
             link.click();
-
-            showToast(`${contacts.length} kontakter exporterade!`, 'success');
+            showToast(`${contacts.length} kontakter exporterade!`);
         }
 
-        // ==================== CHAT FUNCTIONALITY ====================
-        function toggleChat() {
-            elements.chatPanel.classList.toggle('open');
+        // ========== CHAT ==========
+        function toggleChat() { document.getElementById('chatPanel').classList.toggle('open'); }
+
+        function addChatMsg(text, isUser) {
+            const div = document.createElement('div');
+            div.className = `chat-message ${isUser ? 'user' : 'assistant'}`;
+            div.textContent = text;
+            document.getElementById('chatMessages').appendChild(div);
+            div.scrollIntoView({ behavior: 'smooth' });
         }
 
-        function addChatMessage(content, isUser = false) {
-            const msg = document.createElement('div');
-            msg.className = `chat-message ${isUser ? 'user' : 'assistant'}`;
-            msg.textContent = content;
-            elements.chatMessages.appendChild(msg);
-            elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
-        }
+        function sendChat() {
+            const input = document.getElementById('chatInput');
+            const msg = input.value.trim();
+            if (!msg) return;
+            addChatMsg(msg, true);
+            input.value = '';
 
-        async function sendChatMessage() {
-            const message = elements.chatInput.value.trim();
-            if (!message) return;
-
-            addChatMessage(message, true);
-            elements.chatInput.value = '';
-
-            // Simple AI responses based on context
             let response = '';
-            const lowerMsg = message.toLowerCase();
-
-            if (lowerMsg.includes('hur många') || lowerMsg.includes('antal')) {
-                response = `Du har totalt ${state.contacts.length} kontakter. ` +
-                    `${state.contacts.filter(c => c.status === 'new').length} nya, ` +
-                    `${state.contacts.filter(c => c.status === 'contacted').length} kontaktade, ` +
-                    `${state.contacts.filter(c => c.status === 'followup').length} för uppföljning.`;
-            } else if (lowerMsg.includes('exportera') || lowerMsg.includes('ladda ner')) {
-                response = 'Du kan exportera dina kontakter genom att klicka på "Exportera CSV" i sidomenyn eller i Kontakter-vyn.';
-            } else if (lowerMsg.includes('importera') || lowerMsg.includes('ladda upp')) {
-                response = 'Klicka på "Importera Data" i sidomenyn för att ladda upp en CSV-fil med nya kontakter. Data sparas lokalt och kan byggas på.';
-            } else if (lowerMsg.includes('uppföljning') || lowerMsg.includes('follow')) {
-                const followups = state.contacts.filter(c => c.status === 'followup');
-                response = followups.length > 0
-                    ? `Du har ${followups.length} kontakter som behöver uppföljning: ${followups.slice(0,3).map(c => c.name).join(', ')}${followups.length > 3 ? '...' : ''}`
-                    : 'Du har inga kontakter markerade för uppföljning just nu.';
-            } else if (lowerMsg.includes('telia') || lowerMsg.includes('telenor') || lowerMsg.includes('tele2') || lowerMsg.includes('tre')) {
-                const op = lowerMsg.includes('telia') ? 'telia' :
-                           lowerMsg.includes('telenor') ? 'telenor' :
-                           lowerMsg.includes('tele2') ? 'tele2' : 'tre';
-                const count = state.contacts.filter(c => c.operators.toLowerCase().includes(op)).length;
-                response = `Du har ${count} kontakter med ${op.charAt(0).toUpperCase() + op.slice(1)} som operatör.`;
-            } else if (lowerMsg.includes('hej') || lowerMsg.includes('hallå') || lowerMsg.includes('tjena')) {
-                response = 'Hej! Hur kan jag hjälpa dig idag? Jag kan svara på frågor om dina kontakter, ge statistik, eller hjälpa med navigering i systemet.';
+            const lower = msg.toLowerCase();
+            if (lower.includes('hur många') || lower.includes('antal')) {
+                response = `Du har ${state.contacts.length} kontakter i ${state.batches.length} listor.`;
+            } else if (lower.includes('telia')) {
+                response = `${state.contacts.filter(c => c.operators.toLowerCase().includes('telia')).length} kontakter har Telia.`;
+            } else if (lower.includes('telenor')) {
+                response = `${state.contacts.filter(c => c.operators.toLowerCase().includes('telenor')).length} kontakter har Telenor.`;
+            } else if (lower.includes('tele2')) {
+                response = `${state.contacts.filter(c => c.operators.toLowerCase().includes('tele2')).length} kontakter har Tele2.`;
+            } else if (lower.includes('tre')) {
+                response = `${state.contacts.filter(c => c.operators.toLowerCase().includes('hi3g') || c.operators.toLowerCase().includes('tre')).length} kontakter har Tre.`;
+            } else if (lower.includes('export')) {
+                response = 'Klicka på "Exportera CSV" i sidomenyn för att ladda ner alla kontakter.';
+            } else if (lower.includes('radera') || lower.includes('ta bort')) {
+                response = 'Gå till "Importerade Listor" för att radera hela listor, eller använd papperskorgen i kontaktvyn för enskilda kontakter.';
             } else {
-                response = 'Jag förstår inte riktigt. Prova att fråga om:\n• Antal kontakter\n• Operatörsstatistik\n• Uppföljningar\n• Hur man importerar/exporterar';
+                response = 'Jag kan hjälpa med: antal kontakter, operatörsstatistik, export, radering. Vad vill du veta?';
             }
-
-            // Simulate typing delay
-            setTimeout(() => addChatMessage(response), 500);
+            setTimeout(() => addChatMsg(response), 300);
         }
 
-        // ==================== INITIALIZATION ====================
+        // ========== INIT ==========
         async function init() {
-            try {
-                await db.init();
-                state.contacts = await db.getAllContacts();
-                state.callLogs = await db.getAllCallLogs();
+            await db.init();
+            state.contacts = await db.getAllContacts();
+            state.batches = await db.getAllBatches();
 
-                updateStats();
+            updateStats(); renderContacts(); renderBatches(); renderRecentContacts();
+
+            // Nav
+            document.querySelectorAll('.nav-item[data-view]').forEach(n => n.addEventListener('click', () => switchView(n.dataset.view)));
+            document.querySelectorAll('[data-action]').forEach(b => {
+                b.addEventListener('click', () => {
+                    if (b.dataset.action === 'import') openModal('importModal');
+                    if (b.dataset.action === 'export') exportCSV();
+                });
+            });
+
+            // Stat cards - clickable filter
+            document.querySelectorAll('.stat-card[data-filter]').forEach(card => {
+                card.addEventListener('click', () => {
+                    document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+                    switchView('contacts', card.dataset.filter);
+                });
+            });
+
+            // Mobile
+            document.getElementById('mobileMenuBtn').addEventListener('click', () => document.getElementById('sidebar').classList.toggle('open'));
+
+            // Upload
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+            uploadArea.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', (e) => {
+                state.selectedFile = e.target.files[0];
+                if (state.selectedFile) {
+                    uploadArea.querySelector('.upload-text').textContent = state.selectedFile.name;
+                    document.getElementById('processImportBtn').disabled = false;
+                }
+            });
+            uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+            uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault(); uploadArea.classList.remove('dragover');
+                state.selectedFile = e.dataTransfer.files[0];
+                if (state.selectedFile?.name.endsWith('.csv')) {
+                    uploadArea.querySelector('.upload-text').textContent = state.selectedFile.name;
+                    document.getElementById('processImportBtn').disabled = false;
+                }
+            });
+
+            document.getElementById('processImportBtn').addEventListener('click', handleImport);
+
+            // Close modals
+            document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', () => closeModal('importModal')));
+            document.getElementById('importModal').addEventListener('click', (e) => { if (e.target.id === 'importModal') closeModal('importModal'); });
+
+            // Filters
+            document.getElementById('searchInput').addEventListener('input', renderContacts);
+            document.getElementById('operatorFilter').addEventListener('change', renderContacts);
+            document.getElementById('sortSelect').addEventListener('change', renderContacts);
+            document.getElementById('clearFilters').addEventListener('click', () => {
+                document.getElementById('searchInput').value = '';
+                document.getElementById('operatorFilter').value = '';
+                document.getElementById('sortSelect').value = '';
+                document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('active'));
                 renderContacts();
-                renderCallLogs();
-                renderRecentActivity();
+            });
 
-                // Navigation
-                elements.navItems.forEach(item => {
-                    item.addEventListener('click', () => switchView(item.dataset.view));
-                });
+            // Table actions
+            document.getElementById('contactsTableBody').addEventListener('click', (e) => {
+                const callBtn = e.target.closest('[data-call]');
+                const delBtn = e.target.closest('[data-delete]');
+                if (callBtn) {
+                    const c = state.contacts.find(x => x.id === parseInt(callBtn.dataset.call));
+                    if (c?.phones) window.open(`tel:${c.phones.split('\n')[0].replace(/\s/g, '')}`, '_self');
+                }
+                if (delBtn) handleDeleteContact(parseInt(delBtn.dataset.delete));
+            });
 
-                // Actions
-                document.querySelectorAll('[data-action]').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        const action = btn.dataset.action;
-                        if (action === 'import') openModal('importModal');
-                        if (action === 'export') exportCSV();
-                    });
-                });
+            // Notes save on blur
+            document.getElementById('contactsTableBody').addEventListener('focusout', (e) => {
+                if (e.target.matches('textarea[data-id]')) {
+                    saveNote(parseInt(e.target.dataset.id), e.target.value);
+                }
+            });
 
-                // Mobile menu
-                elements.mobileMenuBtn.addEventListener('click', () => {
-                    elements.sidebar.classList.toggle('open');
-                });
+            // Batch actions
+            document.getElementById('batchList').addEventListener('click', (e) => {
+                const viewBtn = e.target.closest('[data-view-batch]');
+                const delBtn = e.target.closest('[data-delete-batch]');
+                if (viewBtn) {
+                    // Filter contacts by batch - show in contacts view
+                    switchView('contacts');
+                    // Custom filter for this batch
+                    const batchId = parseInt(viewBtn.dataset.viewBatch);
+                    const filtered = state.contacts.filter(c => c.batchId === batchId);
+                    state.filteredContacts = filtered;
+                    document.getElementById('contactsSubtitle').textContent = `Visar ${filtered.length} kontakter från vald lista`;
+                    const tbody = document.getElementById('contactsTableBody');
+                    tbody.innerHTML = filtered.map(c => `
+                        <tr data-id="${c.id}">
+                            <td class="cell-company">${escapeHtml(c.name)}</td>
+                            <td>${escapeHtml(c.org)}</td>
+                            <td>${escapeHtml(c.address)}</td>
+                            <td>${escapeHtml(c.city)}</td>
+                            <td class="cell-multiline">${escapeHtml(c.phones)}</td>
+                            <td class="cell-multiline">${escapeHtml(c.users)}</td>
+                            <td class="cell-multiline">${escapeHtml(c.operators)}</td>
+                            <td>${escapeHtml(c.contact)}</td>
+                            <td>${escapeHtml(c.role)}</td>
+                            <td class="inline-note"><textarea data-id="${c.id}">${escapeHtml(c.notes || '')}</textarea></td>
+                            <td><div class="row-actions"><button class="action-btn call" data-call="${c.id}"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07"/></svg></button><button class="action-btn delete" data-delete="${c.id}"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button></div></td>
+                        </tr>
+                    `).join('');
+                }
+                if (delBtn) handleDeleteBatch(parseInt(delBtn.dataset.deleteBatch));
+            });
 
-                // Upload area
-                elements.uploadArea.addEventListener('click', () => elements.fileInput.click());
-                elements.uploadArea.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') elements.fileInput.click();
-                });
-                elements.fileInput.addEventListener('change', (e) => handleFileUpload(e.target.files[0]));
+            document.getElementById('deleteAllBtn').addEventListener('click', handleDeleteAll);
 
-                elements.uploadArea.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                    elements.uploadArea.classList.add('dragover');
-                });
-                elements.uploadArea.addEventListener('dragleave', () => {
-                    elements.uploadArea.classList.remove('dragover');
-                });
-                elements.uploadArea.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    elements.uploadArea.classList.remove('dragover');
-                    handleFileUpload(e.dataTransfer.files[0]);
-                });
+            // Chat
+            document.getElementById('chatToggleBtn').addEventListener('click', toggleChat);
+            document.getElementById('openChatBtn').addEventListener('click', toggleChat);
+            document.getElementById('closeChatBtn').addEventListener('click', toggleChat);
+            document.getElementById('sendChatBtn').addEventListener('click', sendChat);
+            document.getElementById('chatInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChat(); });
 
-                // Import button
-                elements.processImportBtn.addEventListener('click', processImport);
-
-                // Close modals
-                document.querySelectorAll('[data-close-modal]').forEach(btn => {
-                    btn.addEventListener('click', closeAllModals);
-                });
-                document.querySelectorAll('.modal-overlay').forEach(overlay => {
-                    overlay.addEventListener('click', (e) => {
-                        if (e.target === overlay) closeAllModals();
-                    });
-                });
-
-                // Filters
-                elements.searchInput.addEventListener('input', renderContacts);
-                elements.operatorFilter.addEventListener('change', renderContacts);
-                elements.statusFilter.addEventListener('change', renderContacts);
-                elements.sortSelect.addEventListener('change', renderContacts);
-
-                // Table row actions
-                elements.contactsTableBody.addEventListener('click', (e) => {
-                    const btn = e.target.closest('[data-action]');
-                    if (btn) {
-                        handleRowAction(btn.dataset.action, btn.dataset.id);
-                    }
-                });
-
-                // Save call log
-                elements.saveCallLogBtn.addEventListener('click', saveCallLog);
-
-                // Chat
-                elements.chatToggleBtn.addEventListener('click', toggleChat);
-                elements.openChatBtn.addEventListener('click', toggleChat);
-                elements.closeChatBtn.addEventListener('click', toggleChat);
-                elements.sendChatBtn.addEventListener('click', sendChatMessage);
-                elements.chatInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') sendChatMessage();
-                });
-
-                // Keyboard shortcuts
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape') {
-                        closeAllModals();
-                        elements.chatPanel.classList.remove('open');
-                    }
-                });
-
-                console.log('Ringoptima Enterprise initialized');
-
-            } catch (error) {
-                console.error('Initialization error:', error);
-                showToast('Fel vid start: ' + error.message, 'error');
-            }
+            // Keyboard
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') { closeModal('importModal'); document.getElementById('chatPanel').classList.remove('open'); }
+            });
         }
 
-        // Start app
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
