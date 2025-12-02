@@ -1,0 +1,47 @@
+Last login: Thu Oct 23 20:59:24 on ttys000
+a313@MacBook-Air-som-tillhor-Barzan ~ %    cd ~/Downloads && ./pts_interaktiv.sh 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+════════════════════════════════════════════════════════════
+         PTS Operatör Lookup - Interaktiv version
+════════════════════════════════════════════════════════════
+
+Välj ett alternativ:
+1) Sök ett eller flera nummer direkt
+2) Läs nummer från fil
+3) Avsluta
+
+Ditt val (1-3): 
+
+
+
+
+
+
+
+
+
+
+
+
+
+

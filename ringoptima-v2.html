@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ringoptima - Smart Databehandling</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-primary: #2596be;
+            --color-secondary: #765db6;
+            --color-gradient-start: #2596be;
+            --color-gradient-end: #765db6;
+            --glass-bg: rgba(255, 255, 255, 0.12);
+            --glass-border: rgba(255, 255, 255, 0.25);
+            --color-telenor: #00bcd4;
+            --color-tele2: #4caf50;
+            --color-tre: #9c27b0;
+            --color-telia: #ff9800;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--color-gradient-start) 0%, var(--color-gradient-end) 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* SVG Icon System */
+        .icon {
+            width: 24px;
+            height: 24px;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+            flex-shrink: 0;
+        }
+
+        .icon-lg {
+            width: 32px;
+            height: 32px;
+        }
+
+        .icon-xl {
+            width: 48px;
+            height: 48px;
+        }
+
+        /* Floating orbs */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.25), transparent);
+            filter: blur(40px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .orb-1 { width: 400px; height: 400px; top: -100px; left: -100px; animation: float1 20s ease-in-out infinite; }
+        .orb-2 { width: 350px; height: 350px; bottom: -100px; right: -100px; animation: float2 25s ease-in-out infinite; }
+        .orb-3 { width: 300px; height: 300px; top: 50%; right: -150px; animation: float3 22s ease-in-out infinite; }
+
+        @keyframes float1 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(50px, 100px); } }
+        @keyframes float2 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-80px, -50px); } }
+        @keyframes float3 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-100px, 100px); } }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Glass Card */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(40px) saturate(200%);
+            -webkit-backdrop-filter: blur(40px) saturate(200%);
+            border-radius: 24px;
+            border: 1.5px solid var(--glass-border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+            padding: 40px;
+            margin-bottom: 20px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        .logo {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1.5px solid rgba(255, 255, 255, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .logo svg {
+            width: 32px;
+            height: 32px;
+            stroke: white;
+        }
+
+        h1 {
+            color: white;
+            font-size: 2.8rem;
+            font-weight: 800;
+            letter-spacing: -1.5px;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            text-align: center;
+            font-size: 1rem;
+            margin-bottom: 40px;
+        }
+
+        /* Upload Area */
+        .upload-area {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            padding: 50px 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s ease;
+        }
+
+        .upload-area:hover {
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .upload-area.dragover {
+            border-color: #fff;
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.02);
+        }
+
+        .upload-icon-wrapper {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .upload-text {
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .upload-hint {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+        }
+
+        input[type="file"] { display: none; }
+
+        /* Buttons */
+        .btn {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.1));
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 1.5px solid rgba(255, 255, 255, 0.4);
+            padding: 16px 40px;
+            border-radius: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 30px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.15));
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Spinner */
+        .spinner-container {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .spinner-text {
+            color: white;
+            font-size: 1rem;
+        }
+
+        /* Messages */
+        .message {
+            padding: 16px 24px;
+            border-radius: 12px;
+            margin-top: 20px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+        }
+
+        .success-message {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1.5px solid rgba(76, 175, 80, 0.4);
+            color: white;
+        }
+
+        .error-message {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1.5px solid rgba(244, 67, 54, 0.4);
+            color: white;
+        }
+
+        /* Results */
+        .results {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .results-title {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Stats - Operator Counts */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+        }
+
+        .stat-card.telenor::before { background: var(--color-telenor); }
+        .stat-card.tele2::before { background: var(--color-tele2); }
+        .stat-card.tre::before { background: var(--color-tre); }
+        .stat-card.telia::before { background: var(--color-telia); }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .stat-icon-wrapper {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+        }
+
+        .stat-card.telenor .stat-icon-wrapper { background: rgba(0, 188, 212, 0.2); }
+        .stat-card.tele2 .stat-icon-wrapper { background: rgba(76, 175, 80, 0.2); }
+        .stat-card.tre .stat-icon-wrapper { background: rgba(156, 39, 176, 0.2); }
+        .stat-card.telia .stat-icon-wrapper { background: rgba(255, 152, 0, 0.2); }
+
+        .stat-number {
+            color: white;
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Controls */
+        .controls-container {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .control-group {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .control-label {
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: rgba(255, 255, 255, 0.8);
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.4);
+            color: white;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            border-color: rgba(255, 255, 255, 0.4);
+            color: white;
+        }
+
+        .sort-select {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 1.5px solid rgba(255, 255, 255, 0.3);
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 40px;
+        }
+
+        .sort-select option {
+            background: #2596be;
+            color: white;
+        }
+
+        .clear-filters-btn {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            color: rgba(255, 255, 255, 0.7);
+            border: 1.5px solid rgba(255, 255, 255, 0.15);
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .clear-filters-btn:hover {
+            background: rgba(244, 67, 54, 0.2);
+            border-color: rgba(244, 67, 54, 0.4);
+            color: white;
+        }
+
+        /* Table */
+        .table-container {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            overflow: hidden;
+        }
+
+        .table-scroll {
+            max-height: 600px;
+            overflow: auto;
+        }
+
+        .table-scroll::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        .table-scroll::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .table-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+            table-layout: auto;
+            min-width: max-content;
+        }
+
+        thead th:nth-child(1), tbody td:nth-child(1) { min-width: 200px; } /* NAMN */
+        thead th:nth-child(2), tbody td:nth-child(2) { min-width: 120px; } /* ORG */
+        thead th:nth-child(3), tbody td:nth-child(3) { min-width: 180px; } /* ADRESS */
+        thead th:nth-child(4), tbody td:nth-child(4) { min-width: 120px; } /* ORT */
+        thead th:nth-child(5), tbody td:nth-child(5) { min-width: 140px; } /* NUMMER */
+        thead th:nth-child(6), tbody td:nth-child(6) { min-width: 180px; } /* ANVÄNDARE */
+        thead th:nth-child(7), tbody td:nth-child(7) { min-width: 160px; } /* OPERATÖR */
+        thead th:nth-child(8), tbody td:nth-child(8) { min-width: 140px; } /* KONTAKT */
+        thead th:nth-child(9), tbody td:nth-child(9) { min-width: 180px; } /* ROLL */
+
+        thead th {
+            color: white;
+            font-weight: 700;
+            text-align: left;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.12);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            white-space: nowrap;
+        }
+
+        thead th:first-child { border-radius: 10px 0 0 10px; }
+        thead th:last-child { border-radius: 0 10px 10px 0; }
+
+        tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        tbody tr:hover {
+            transform: translateX(6px);
+        }
+
+        tbody td {
+            color: rgba(255, 255, 255, 0.95);
+            padding: 18px 16px;
+            background: rgba(255, 255, 255, 0.06);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 0.85rem;
+            line-height: 1.5;
+            vertical-align: top;
+        }
+
+        tbody td:nth-child(1),
+        tbody td:nth-child(2),
+        tbody td:nth-child(3),
+        tbody td:nth-child(4) {
+            white-space: nowrap;
+        }
+
+        tbody td:nth-child(5),
+        tbody td:nth-child(6),
+        tbody td:nth-child(7) {
+            white-space: pre-line;
+            word-break: keep-all;
+        }
+
+        tbody td:first-child {
+            border-left: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px 0 0 10px;
+            font-weight: 600;
+        }
+
+        tbody td:last-child {
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 0 10px 10px 0;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            color: white;
+            border: 1.5px solid rgba(255, 255, 255, 0.3);
+            padding: 14px 32px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .reset-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1.5px solid rgba(255, 255, 255, 0.3);
+            padding: 14px 32px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .reset-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .glass-card {
+                padding: 24px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .stats {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .controls-container {
+                flex-direction: column;
+            }
+
+            .control-group {
+                width: 100%;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .download-btn, .reset-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="container">
+        <!-- Upload Card -->
+        <div class="glass-card">
+            <div class="header">
+                <div class="logo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                    </svg>
+                </div>
+                <h1>Ringoptima</h1>
+            </div>
+            <p class="subtitle">Smart databehandling för moderna företag</p>
+
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon-wrapper">
+                    <svg class="icon icon-xl" viewBox="0 0 24 24" stroke="white">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                </div>
+                <div class="upload-text">Släpp din CSV-fil här</div>
+                <div class="upload-hint">eller klicka för att välja fil</div>
+                <input type="file" id="fileInput" accept=".csv">
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" id="transformBtn" disabled>
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                    </svg>
+                    Transformera Data
+                </button>
+            </div>
+
+            <div class="spinner-container" id="spinnerContainer">
+                <div class="spinner"></div>
+                <div class="spinner-text">Bearbetar din data...</div>
+            </div>
+
+            <div class="message success-message" id="successMessage">
+                <svg class="icon" viewBox="0 0 24 24" stroke="#4caf50">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                <span>Data transformerad framgångsrikt!</span>
+            </div>
+
+            <div class="message error-message" id="errorMessage"></div>
+        </div>
+
+        <!-- Results Card -->
+        <div class="glass-card results" id="results">
+            <div class="results-header">
+                <h2 class="results-title">
+                    <svg class="icon icon-lg" viewBox="0 0 24 24" stroke="white">
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                    Resultat
+                </h2>
+            </div>
+
+            <!-- Operator Stats -->
+            <div class="stats">
+                <div class="stat-card telenor">
+                    <div class="stat-icon-wrapper">
+                        <svg class="icon icon-lg" viewBox="0 0 24 24" stroke="var(--color-telenor)">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-number" id="countTelenor">0</div>
+                    <div class="stat-label">Antal Telenor</div>
+                </div>
+                <div class="stat-card tele2">
+                    <div class="stat-icon-wrapper">
+                        <svg class="icon icon-lg" viewBox="0 0 24 24" stroke="var(--color-tele2)">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-number" id="countTele2">0</div>
+                    <div class="stat-label">Antal Tele2</div>
+                </div>
+                <div class="stat-card tre">
+                    <div class="stat-icon-wrapper">
+                        <svg class="icon icon-lg" viewBox="0 0 24 24" stroke="var(--color-tre)">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-number" id="countTre">0</div>
+                    <div class="stat-label">Antal Tre</div>
+                </div>
+                <div class="stat-card telia">
+                    <div class="stat-icon-wrapper">
+                        <svg class="icon icon-lg" viewBox="0 0 24 24" stroke="var(--color-telia)">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-number" id="countTelia">0</div>
+                    <div class="stat-label">Antal Telia</div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="controls-container">
+                <div class="control-group">
+                    <label class="control-label">
+                        <svg class="icon" viewBox="0 0 24 24" stroke="white">
+                            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                        </svg>
+                        Filtrera efter operatör
+                    </label>
+                    <div class="filter-buttons">
+                        <button class="filter-btn" data-operator="telenor">Telenor</button>
+                        <button class="filter-btn" data-operator="tele2">Tele2</button>
+                        <button class="filter-btn" data-operator="tre">Tre</button>
+                        <button class="filter-btn" data-operator="telia">Telia</button>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">
+                        <svg class="icon" viewBox="0 0 24 24" stroke="white">
+                            <line x1="4" y1="21" x2="4" y2="14"></line>
+                            <line x1="4" y1="10" x2="4" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12" y2="3"></line>
+                            <line x1="20" y1="21" x2="20" y2="16"></line>
+                            <line x1="20" y1="12" x2="20" y2="3"></line>
+                            <line x1="1" y1="14" x2="7" y2="14"></line>
+                            <line x1="9" y1="8" x2="15" y2="8"></line>
+                            <line x1="17" y1="16" x2="23" y2="16"></line>
+                        </svg>
+                        Sortera efter
+                    </label>
+                    <select class="sort-select" id="sortSelect">
+                        <option value="">Ingen sortering</option>
+                        <option value="phone-desc">Nummer (flest först)</option>
+                        <option value="phone-asc">Nummer (minst först)</option>
+                        <option value="name-asc">Namn (A-Ö)</option>
+                        <option value="name-desc">Namn (Ö-A)</option>
+                    </select>
+                </div>
+                <div class="control-group" style="flex: 0; min-width: auto;">
+                    <label class="control-label" style="opacity: 0;">x</label>
+                    <button class="clear-filters-btn" id="clearFilters">
+                        <svg class="icon" viewBox="0 0 24 24" stroke="currentColor">
+                            <polyline points="1 4 1 10 7 10"></polyline>
+                            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                        </svg>
+                        Återställ
+                    </button>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="table-container">
+                <div class="table-scroll">
+                    <table id="resultsTable">
+                        <thead>
+                            <tr>
+                                <th>NAMN</th>
+                                <th>ORG</th>
+                                <th>ADRESS</th>
+                                <th>ORT</th>
+                                <th>NUMMER</th>
+                                <th>ANVÄNDARE</th>
+                                <th>OPERATÖR</th>
+                                <th>KONTAKT</th>
+                                <th>ROLL</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="download-btn" id="downloadBtn">
+                    <svg class="icon" viewBox="0 0 24 24" stroke="currentColor">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Ladda ner CSV
+                </button>
+                <button class="reset-btn" id="resetBtn">
+                    <svg class="icon" viewBox="0 0 24 24" stroke="currentColor">
+                        <polyline points="1 4 1 10 7 10"></polyline>
+                        <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                    </svg>
+                    Ny transformation
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let transformedData = [];
+        let displayedData = [];
+        let originalFileName = '';
+        let currentFilter = null;
+        let currentSort = '';
+
+        // DOM Elements
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const transformBtn = document.getElementById('transformBtn');
+        const spinnerContainer = document.getElementById('spinnerContainer');
+        const results = document.getElementById('results');
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+        const resetBtn = document.getElementById('resetBtn');
+        const sortSelect = document.getElementById('sortSelect');
+        const clearFiltersBtn = document.getElementById('clearFilters');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+
+        // Upload Events
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.name.endsWith('.csv')) {
+                fileInput.files = e.dataTransfer.files;
+                handleFileSelect();
+            }
+        });
+
+        fileInput.addEventListener('change', handleFileSelect);
+
+        function handleFileSelect() {
+            const file = fileInput.files[0];
+            if (file) {
+                originalFileName = file.name.replace('.csv', '');
+                uploadArea.querySelector('.upload-text').textContent = file.name;
+                uploadArea.querySelector('.upload-hint').textContent = 'Klar att transformera!';
+                transformBtn.disabled = false;
+                errorMessage.style.display = 'none';
+                successMessage.style.display = 'none';
+            }
+        }
+
+        transformBtn.addEventListener('click', async () => {
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            spinnerContainer.style.display = 'block';
+            results.style.display = 'none';
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+            transformBtn.disabled = true;
+
+            try {
+                const text = await file.text();
+                const rows = parseCSV(text);
+
+                if (rows.length < 2) {
+                    throw new Error('Filen verkar vara tom eller saknar data');
+                }
+
+                transformedData = transformData(rows);
+                displayedData = [...transformedData];
+                displayResults(displayedData);
+
+                spinnerContainer.style.display = 'none';
+                successMessage.style.display = 'flex';
+
+                setTimeout(() => {
+                    results.style.display = 'block';
+                    results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 500);
+
+            } catch (error) {
+                spinnerContainer.style.display = 'none';
+                showError('Fel vid bearbetning: ' + error.message);
+                transformBtn.disabled = false;
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            fileInput.value = '';
+            uploadArea.querySelector('.upload-text').textContent = 'Släpp din CSV-fil här';
+            uploadArea.querySelector('.upload-hint').textContent = 'eller klicka för att välja fil';
+            transformBtn.disabled = true;
+            results.style.display = 'none';
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+            transformedData = [];
+            displayedData = [];
+            currentFilter = null;
+            currentSort = '';
+            filterBtns.forEach(btn => btn.classList.remove('active'));
+            sortSelect.value = '';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Filter Event Listeners
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const operator = btn.dataset.operator;
+                if (currentFilter === operator) {
+                    currentFilter = null;
+                    btn.classList.remove('active');
+                } else {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    currentFilter = operator;
+                    btn.classList.add('active');
+                }
+                applyFiltersAndSort();
+            });
+        });
+
+        sortSelect.addEventListener('change', (e) => {
+            currentSort = e.target.value;
+            applyFiltersAndSort();
+        });
+
+        clearFiltersBtn.addEventListener('click', () => {
+            currentFilter = null;
+            currentSort = '';
+            filterBtns.forEach(btn => btn.classList.remove('active'));
+            sortSelect.value = '';
+            applyFiltersAndSort();
+        });
+
+        function applyFiltersAndSort() {
+            if (!transformedData.length) return;
+
+            let filteredData = transformedData.slice(1);
+
+            if (currentFilter) {
+                filteredData = filterByOperator(filteredData, currentFilter);
+            }
+
+            if (currentSort) {
+                filteredData = sortData(filteredData, currentSort);
+            }
+
+            displayedData = [transformedData[0], ...filteredData];
+            displayResults(displayedData);
+        }
+
+        function filterByOperator(data, operator) {
+            const operatorMap = {
+                'telenor': ['Telenor Sverige AB', 'Telenor'],
+                'tele2': ['Tele2 Sverige AB', 'Tele2'],
+                'tre': ['HI3G Access AB', 'Hi3G', 'HI3G', '3'],
+                'telia': ['Telia Sverige AB', 'TeliaSonera AB', 'TeliaSonera', 'Telia']
+            };
+
+            const searchTerms = operatorMap[operator] || [];
+
+            return data.filter(row => {
+                const operators = (row[6] || '').toLowerCase();
+                return searchTerms.some(term => operators.includes(term.toLowerCase()));
+            });
+        }
+
+        function sortData(data, sortType) {
+            const sorted = [...data];
+
+            if (sortType === 'phone-desc' || sortType === 'phone-asc') {
+                sorted.sort((a, b) => {
+                    const countA = (a[4] || '').split('\n').filter(p => p.trim()).length;
+                    const countB = (b[4] || '').split('\n').filter(p => p.trim()).length;
+                    return sortType === 'phone-desc' ? countB - countA : countA - countB;
+                });
+            } else if (sortType === 'name-asc' || sortType === 'name-desc') {
+                sorted.sort((a, b) => {
+                    const nameA = (a[0] || '').toLowerCase();
+                    const nameB = (b[0] || '').toLowerCase();
+                    return sortType === 'name-asc' ? nameA.localeCompare(nameB, 'sv') : nameB.localeCompare(nameA, 'sv');
+                });
+            }
+
+            return sorted;
+        }
+
+        function showError(message) {
+            errorMessage.innerHTML = '<svg class="icon" viewBox="0 0 24 24" stroke="#f44336"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg><span>' + message + '</span>';
+            errorMessage.style.display = 'flex';
+        }
+
+        function parseCSV(text) {
+            const lines = text.split('\n');
+            const result = [];
+            let currentLine = '';
+            let inQuotes = false;
+
+            for (let line of lines) {
+                currentLine += line;
+                const quoteCount = (currentLine.match(/"/g) || []).length;
+                inQuotes = quoteCount % 2 !== 0;
+
+                if (!inQuotes) {
+                    const row = [];
+                    let cell = '';
+                    let insideQuote = false;
+
+                    for (let i = 0; i < currentLine.length; i++) {
+                        const char = currentLine[i];
+                        if (char === '"') {
+                            insideQuote = !insideQuote;
+                        } else if (char === ',' && !insideQuote) {
+                            row.push(cell);
+                            cell = '';
+                        } else {
+                            cell += char;
+                        }
+                    }
+                    row.push(cell);
+                    result.push(row);
+                    currentLine = '';
+                } else {
+                    currentLine += '\n';
+                }
+            }
+            return result;
+        }
+
+        function extractDataFromText(simplePhone, phoneDataText, styrelseText) {
+            const numbers = [];
+            const users = [];
+            const operators = [];
+            let kontakt = '';
+            let roll = '';
+
+            // Parse phone data from the TAB-separated column (Column 5 - "Operatör")
+            // Format: Telefonnummer\tAnvändare\tOperatör\tSenaste portering\tTidigare operatör\tTyp
+            if (phoneDataText) {
+                const lines = phoneDataText.split('\n');
+                // Swedish phone patterns - flexible to match various formats:
+                // 073-982 67 96, 036-12 95 79, 0152-154 23, 08-123 456, etc.
+                const phonePattern = /^0\d{1,3}[-\s]?[\d\s]{4,}/;
+
+                for (let line of lines) {
+                    line = line.trim();
+                    // Skip header line and info lines
+                    if (line.startsWith('Telefonnummer') ||
+                        line.startsWith('Är det ditt') ||
+                        line.startsWith('Info') ||
+                        line.startsWith('Information om') ||
+                        line.startsWith('Andra format') ||
+                        line.startsWith('Nyhet') ||
+                        line.startsWith('Hittar du') ||
+                        line.startsWith('Lås upp') ||
+                        line.startsWith('Köp för') ||
+                        line.length === 0 ||
+                        line.startsWith('+46')) {
+                        continue;
+                    }
+
+                    // Check if line starts with a phone number
+                    if (phonePattern.test(line)) {
+                        // Try tab separator first, then multiple spaces
+                        let parts = line.split('\t').filter(p => p.trim());
+                        if (parts.length < 3) {
+                            // Try splitting by multiple spaces (4+)
+                            parts = line.split(/\s{4,}/).filter(p => p.trim());
+                        }
+                        if (parts.length < 3) {
+                            // Try splitting by 2+ spaces
+                            parts = line.split(/\s{2,}/).filter(p => p.trim());
+                        }
+
+                        if (parts.length >= 3) {
+                            const phone = parts[0].trim();
+                            const user = parts[1].trim();
+                            let operator = parts[2].trim();
+
+                            // Clean operator name
+                            operator = operator.replace(/\s*\(mobile\)/gi, '');
+                            operator = operator.replace(/\s*\(fix\)/gi, '');
+
+                            if (phone) numbers.push(phone);
+                            if (user) users.push(user);
+                            if (operator && !operator.toLowerCase().includes('kontakta oss')) {
+                                operators.push(operator);
+                            }
+                        } else if (parts.length >= 1) {
+                            // At least capture the phone number
+                            const phone = parts[0].trim();
+                            if (phone) numbers.push(phone);
+                        }
+                    }
+                }
+            }
+
+            // If no numbers found from TAB data, use simple phone from Column 4
+            if (numbers.length === 0 && simplePhone && simplePhone.trim()) {
+                const cleanPhone = simplePhone.trim();
+                if (/^0\d{1,3}[-\s]?[\d\s]{4,}/.test(cleanPhone)) {
+                    numbers.push(cleanPhone);
+                }
+            }
+
+            // Parse contact info from Styrelse column (Column 6)
+            // Format: Bolagsinformation\nOrg.nummer:\t556...\nVerkställande direktör:\tName
+            if (styrelseText) {
+                const rolePatterns = [
+                    { pattern: /Verkställande direktör[:\t\s]+([^\n\t]+)/i, role: 'Verkställande direktör' },
+                    { pattern: /Extern verkställande direktör[:\t\s]+([^\n\t]+)/i, role: 'Extern verkställande direktör' },
+                    { pattern: /Ordförande[:\t\s]+([^\n\t]+)/i, role: 'Ordförande' },
+                    { pattern: /Styrelseledamot[:\t\s]+([^\n\t]+)/i, role: 'Styrelseledamot' },
+                    { pattern: /Styrelsesuppleant[:\t\s]+([^\n\t]+)/i, role: 'Styrelsesuppleant' }
+                ];
+
+                for (const { pattern, role } of rolePatterns) {
+                    const match = styrelseText.match(pattern);
+                    if (match) {
+                        let name = match[1].trim();
+                        // Clean up any extra tabs or noise
+                        name = name.split('\t')[0].trim();
+                        if (name && !name.toLowerCase().includes('lägg till') && !name.toLowerCase().includes('e-post')) {
+                            kontakt = name;
+                            roll = role;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return {
+                numbers: numbers.join('\n'),
+                users: users.join('\n'),
+                operators: operators.join('\n'),
+                kontakt: kontakt,
+                roll: roll
+            };
+        }
+
+        function transformData(rows) {
+            if (rows.length === 0) return [];
+
+            const header = ['NAMN', 'ORG', 'ADRESS', 'ORT', 'NUMMER', 'ANVÄNDARE', 'OPERATÖR', 'KONTAKT', 'ROLL'];
+            const result = [header];
+
+            for (let i = 1; i < rows.length; i++) {
+                const row = rows[i];
+                if (row.length < 3) continue;
+
+                // Skip empty rows
+                if (!row[0] || row[0].trim() === '') continue;
+
+                const namn = (row[0] || '').trim();
+                const org = (row[1] || '').trim();
+                const adress = (row[2] || '').trim();
+                const ort = (row[3] || '').trim();
+                const telefonText = row[4] || '';
+                const operatorText = row[5] || '';
+                const styrelseText = row[6] || '';
+
+                const extracted = extractDataFromText(telefonText, operatorText, styrelseText);
+
+                const newRow = [
+                    namn,
+                    org,
+                    adress,
+                    ort,
+                    extracted.numbers,
+                    extracted.users,
+                    extracted.operators,
+                    extracted.kontakt,
+                    extracted.roll
+                ];
+
+                result.push(newRow);
+            }
+
+            return result;
+        }
+
+        function displayResults(data) {
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '';
+
+            let countTelenor = 0;
+            let countTele2 = 0;
+            let countTre = 0;
+            let countTelia = 0;
+
+            for (let i = 1; i < data.length; i++) {
+                const row = data[i];
+                const tr = document.createElement('tr');
+
+                row.forEach((cell, index) => {
+                    const td = document.createElement('td');
+
+                    // Normalize data
+                    let cellText = cell;
+                    if (index < 4) {
+                        cellText = cellText.replace(/\s+/g, ' ').trim();
+                    } else if (index >= 4 && index <= 6) {
+                        cellText = cellText.split('\n')
+                            .map(line => line.trim())
+                            .filter(line => line.length > 0)
+                            .join('\n');
+                    }
+
+                    td.textContent = cellText;
+                    tr.appendChild(td);
+                });
+
+                tableBody.appendChild(tr);
+
+                // Count operators
+                const operators = (row[6] || '').toLowerCase();
+                if (operators.includes('telenor')) countTelenor++;
+                if (operators.includes('tele2')) countTele2++;
+                if (operators.includes('hi3g') || operators.includes('3g')) countTre++;
+                if (operators.includes('telia') || operators.includes('teliasonera')) countTelia++;
+            }
+
+            // Animate stats
+            animateNumber('countTelenor', 0, countTelenor, 800);
+            animateNumber('countTele2', 0, countTele2, 900);
+            animateNumber('countTre', 0, countTre, 1000);
+            animateNumber('countTelia', 0, countTelia, 1100);
+        }
+
+        function animateNumber(elementId, start, end, duration) {
+            const element = document.getElementById(elementId);
+            const range = end - start;
+            const startTime = performance.now();
+
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                const current = Math.floor(start + range * eased);
+                element.textContent = current;
+
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+
+            requestAnimationFrame(update);
+        }
+
+        // Download
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            const csv = displayedData.map(row => {
+                return row.map(cell => {
+                    if (cell.includes(',') || cell.includes('\n') || cell.includes('"')) {
+                        return '"' + cell.replace(/"/g, '""') + '"';
+                    }
+                    return cell;
+                }).join(',');
+            }).join('\n');
+
+            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = originalFileName + '_ringoptima.csv';
+            link.click();
+        });
+    </script>
+</body>
+</html>

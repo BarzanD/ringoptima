@@ -1,0 +1,20 @@
+#!/bin/bash
+# Launcher för PTS Operatör Lookup
+
+# Hitta användarens hemkatalog
+USER_HOME="$HOME"
+SCRIPT_PATH="$USER_HOME/Downloads/pts_interaktiv.sh"
+
+# Kontrollera om scriptet finns
+if [ ! -f "$SCRIPT_PATH" ]; then
+    osascript -e "display dialog \"Kunde inte hitta pts_interaktiv.sh i Downloads-mappen!\" buttons {\"OK\"} default button \"OK\" with icon stop"
+    exit 1
+fi
+
+# Öppna Terminal och kör scriptet
+osascript <<EOF
+tell application "Terminal"
+    activate
+    do script "cd ~/Downloads && bash pts_interaktiv.sh"
+end tell
+EOF
