@@ -374,6 +374,49 @@ function App() {
             />
           </div>
 
+          {/* Importerade Listor */}
+          {batches.length > 0 && (
+            <div className="mb-6">
+              <h3 className="text-sm font-bold text-white/80 uppercase tracking-wide mb-3 px-2">
+                Importerade Listor ({batches.length})
+              </h3>
+              <div className="space-y-2 max-h-48 overflow-y-auto">
+                {batches.map((batch) => (
+                  <div
+                    key={batch.id}
+                    className="glass rounded-lg p-3 flex items-center justify-between gap-2 hover:bg-white/10 transition-colors"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold truncate">{batch.name}</p>
+                      <p className="text-xs text-white/60">
+                        {batch.count} kontakter • {new Date(batch.createdAt).toLocaleDateString('sv-SE')}
+                      </p>
+                    </div>
+                    <button
+                      onClick={async () => {
+                        if (!batch.id) return;
+                        if (confirm(`Vill du radera listan "${batch.name}" och alla dess kontakter?`)) {
+                          try {
+                            await db.deleteBatch(batch.id);
+                            await loadData();
+                            toast.success(`Lista "${batch.name}" raderad`);
+                          } catch (error) {
+                            console.error('Error deleting batch:', error);
+                            toast.error('Kunde inte radera listan');
+                          }
+                        }
+                      }}
+                      className="p-2 rounded-lg hover:bg-red-500/20 text-red-400 transition-colors flex-shrink-0"
+                      title="Radera lista"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Actions */}
           <div className="space-y-3">
             <button

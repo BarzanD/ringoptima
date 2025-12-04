@@ -67,12 +67,12 @@ export function ContactCard({
 
       {/* Phone Numbers */}
       {phoneNumbers.length > 0 && (
-        <div className="mb-3">
-          <div className="flex items-center gap-1.5 text-xs text-white/50 mb-1.5">
+        <div className="mb-2">
+          <div className="flex items-center gap-1.5 text-xs text-white/50 mb-1">
             <Smartphone className="w-3 h-3" />
             <span className="uppercase tracking-wide font-semibold">Nummer</span>
           </div>
-          <div className="space-y-1">
+          <div className="space-y-0.5">
             {phoneNumbers.slice(0, 2).map((phone, idx) => (
               <div key={idx} className="text-sm font-mono bg-white/5 rounded-lg px-2.5 py-1">
                 {phone.replace(/[\s-]/g, '')}
@@ -89,8 +89,8 @@ export function ContactCard({
 
       {/* Users */}
       {users.length > 0 && (
-        <div className="mb-3">
-          <div className="flex items-center gap-1.5 text-xs text-white/50 mb-1.5">
+        <div className="mb-2">
+          <div className="flex items-center gap-1.5 text-xs text-white/50 mb-1">
             <Users className="w-3 h-3" />
             <span className="uppercase tracking-wide font-semibold">Användare</span>
           </div>
