@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { Phone, Upload, Download, Search, Menu, X, Star, LayoutDashboard, LayoutGrid, LayoutList } from 'lucide-react';
-import { db } from './lib/supabase';
+import { db } from './lib/db';
 import { useStore } from './lib/store';
 import { parseCSV, transformCSV, exportToCSV } from './lib/csv';
 import { cn, getStatusColor, downloadFile } from './lib/utils';
@@ -54,20 +54,13 @@ function App() {
   async function initAuth() {
     setLoading(true);
     try {
-      // Check if user is already authenticated
-      const user = await db.getCurrentUser();
-
-      if (!user) {
-        // Sign in anonymously if not authenticated
-        await db.signInAnonymously();
-        toast.success('Ansluten! Din data synkas nu mellan enheter.');
-      }
-
+      // IndexedDB kräver ingen autentisering
       setAuthenticated(true);
       await loadData();
+      toast.success('Ringoptima V3 laddad! Data lagras lokalt i webbläsaren.');
     } catch (error) {
-      console.error('Auth error:', error);
-      toast.error('Kunde inte ansluta. Kontrollera din Supabase-konfiguration.');
+      console.error('Init error:', error);
+      toast.error('Kunde inte ladda applikationen.');
       setLoading(false);
     }
   }
