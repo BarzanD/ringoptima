@@ -38,61 +38,84 @@ function extractPhoneData(simplePhone: string, phoneData: string, styrelse: stri
   let kontakt = '';
   let roll = '';
 
+  // Kända operatörer för att matcha i texten
+  const knownOperators = [
+    'Telia Sverige AB',
+    'TeliaSonera AB',
+    'Tele2 Sverige AB',
+    'HI3G Access AB',
+    'Hi3G Access AB',
+    'Telenor Sverige AB',
+    'Telenor',
+    'Telness AB',
+    'Advoco Software AB',
+    'Lycamobile Sweden Limited',
+    'Comviq',
+    'Halebop',
+  ];
+
   if (phoneData) {
-    const phonePattern = /^0\d{1,3}[-\s]?[\d\s-]{4,}/;
-    const continuationPattern = /^[\d\s-]{2,}$/;
+    // Regex för att matcha telefonnummer i början av raden
+    const phonePattern = /^(0\d{1,4}[-\s]?[\d\s-]{4,15})/;
     const rawLines = phoneData.split('\n');
 
-    // Pre-process: join lines that are continuations of phone numbers
-    const processedLines: string[] = [];
-    for (let i = 0; i < rawLines.length; i++) {
-      let line = rawLines[i].trim();
+    for (const rawLine of rawLines) {
+      const line = rawLine.trim();
       if (!line) continue;
 
-      // Check if next line is a continuation
-      while (i + 1 < rawLines.length) {
-        const nextLine = rawLines[i + 1].trim();
-        if (nextLine && continuationPattern.test(nextLine) && !nextLine.startsWith('0')) {
-          line += ' ' + nextLine;
-          i++;
-        } else {
-          break;
-        }
-      }
-      processedLines.push(line);
-    }
-
-    for (const line of processedLines) {
+      // Hoppa över irrelevanta rader
       if (
         line.startsWith('Telefonnummer') ||
         line.startsWith('Är det') ||
         line.startsWith('Info') ||
-        line.startsWith('+46')
+        line.startsWith('+46') ||
+        line.startsWith('Nyhet') ||
+        line.startsWith('Hittar du') ||
+        line.startsWith('Lås upp') ||
+        line.startsWith('Köp för') ||
+        line.startsWith('Information om') ||
+        line.startsWith('Andra format') ||
+        line.includes('har') && line.includes('andra telefonnummer')
       )
         continue;
 
-      if (phonePattern.test(line)) {
-        let parts = line.split('\t').filter((p) => p.trim());
-        if (parts.length < 3) parts = line.split(/\s{4,}/).filter((p) => p.trim());
-        if (parts.length < 3) parts = line.split(/\s{2,}/).filter((p) => p.trim());
+      const phoneMatch = line.match(phonePattern);
+      if (phoneMatch) {
+        const phone = phoneMatch[1].trim().replace(/\s+/g, ' ');
+        numbers.push(phone);
 
-        if (parts.length >= 3) {
-          const phone = parts[0].trim().replace(/\s+/g, ' ');
-          numbers.push(phone);
-          users.push(parts[1].trim());
-          const op = parts[2]
-            .trim()
+        // Hitta operatör i raden
+        let foundOperator = '';
+        let operatorIndex = -1;
+        for (const op of knownOperators) {
+          const idx = line.toLowerCase().indexOf(op.toLowerCase());
+          if (idx !== -1 && (operatorIndex === -1 || idx < operatorIndex)) {
+            foundOperator = op;
+            operatorIndex = idx;
+          }
+        }
+
+        if (foundOperator && operatorIndex !== -1) {
+          // Användare är texten mellan telefonnummer och operatör
+          const afterPhone = line.substring(phoneMatch[0].length).trim();
+          const userText = afterPhone.substring(0, afterPhone.toLowerCase().indexOf(foundOperator.toLowerCase())).trim();
+
+          if (userText && !userText.toLowerCase().includes('kontakta')) {
+            users.push(userText);
+          }
+
+          // Rensa operatör från (mobile)/(fix) suffix
+          const cleanOp = foundOperator
             .replace(/\s*\(mobile\)/gi, '')
-            .replace(/\s*\(fix\)/gi, '');
-          if (op && !op.toLowerCase().includes('kontakta')) operators.push(op);
-        } else if (parts.length >= 1) {
-          const phone = parts[0].trim().replace(/\s+/g, ' ');
-          numbers.push(phone);
+            .replace(/\s*\(fix\)/gi, '')
+            .trim();
+          if (cleanOp) operators.push(cleanOp);
         }
       }
     }
   }
 
+  // Fallback: använd enkelt telefonnummer om inget annat hittades
   if (numbers.length === 0 && simplePhone?.trim() && /^0\d{1,3}[-\s]?[\d\s-]{4,}/.test(simplePhone)) {
     numbers.push(simplePhone.trim());
   }
@@ -138,12 +161,11 @@ export function transformCSV(rows: string[][], batchId: number): Omit<Contact, '
 
     const extracted = extractPhoneData(r[4] || '', r[5] || '', r[6] || '');
 
-    // KRITISK VALIDERING: Hoppa över rader utan telefonnummer ELLER firmatecknare
+    // VALIDERING: Hoppa över rader utan telefonnummer (firmatecknare är valfritt)
     const hasPhone = extracted.phones && extracted.phones.trim().length > 0;
-    const hasContact = extracted.contact && extracted.contact.trim().length > 0;
 
-    if (!hasPhone || !hasContact) {
-      console.log(`Hoppar över rad ${i + 1}: ${r[0]} (Saknar ${!hasPhone ? 'telefonnummer' : ''} ${!hasPhone && !hasContact ? 'och' : ''} ${!hasContact ? 'firmatecknare' : ''})`);
+    if (!hasPhone) {
+      console.log(`Hoppar över rad ${i + 1}: ${r[0]} (Saknar telefonnummer)`);
       continue;
     }
 

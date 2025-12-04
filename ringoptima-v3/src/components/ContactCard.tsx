@@ -67,8 +67,8 @@ export function ContactCard({
 
       {/* Phone Numbers */}
       {phoneNumbers.length > 0 && (
-        <div className="mb-2">
-          <div className="flex items-center gap-1.5 text-xs text-white/50 mb-1">
+        <div className="mb-1">
+          <div className="flex items-center gap-1.5 text-xs text-white/50 mb-0.5">
             <Smartphone className="w-3 h-3" />
             <span className="uppercase tracking-wide font-semibold">Nummer</span>
           </div>
@@ -89,8 +89,8 @@ export function ContactCard({
 
       {/* Users */}
       {users.length > 0 && (
-        <div className="mb-2">
-          <div className="flex items-center gap-1.5 text-xs text-white/50 mb-1">
+        <div className="mb-1">
+          <div className="flex items-center gap-1.5 text-xs text-white/50 mb-0.5">
             <Users className="w-3 h-3" />
             <span className="uppercase tracking-wide font-semibold">Användare</span>
           </div>

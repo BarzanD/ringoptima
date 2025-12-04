@@ -1,0 +1,171 @@
+/**
+ * 🎨 RINGOPTIMA V3 - DESIGN SYSTEM TOKENS
+ * Baserat på Golden Ratio (1.618) och Modular Scale
+ */
+
+:root {
+  /* ═══════════════════════════════════════════════════════════
+     SPACING - Golden Ratio Scale (φ = 1.618)
+     ═══════════════════════════════════════════════════════════ */
+  --space-xs: 0.5rem;     /* 8px */
+  --space-sm: 0.813rem;   /* 13px - φ^-1 */
+  --space-md: 1rem;       /* 16px - Base */
+  --space-lg: 1.313rem;   /* 21px - φ^0.5 */
+  --space-xl: 2.125rem;   /* 34px - φ */
+  --space-2xl: 3.438rem;  /* 55px - φ^1.5 */
+  --space-3xl: 5.563rem;  /* 89px - φ^2 */
+
+  /* ═══════════════════════════════════════════════════════════
+     TYPOGRAPHY - Modular Scale (1.25 ratio)
+     ═══════════════════════════════════════════════════════════ */
+  --text-xs: clamp(0.694rem, 0.65rem + 0.22vw, 0.8rem);     /* 11-13px */
+  --text-sm: clamp(0.833rem, 0.78rem + 0.26vw, 1rem);       /* 13-16px */
+  --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.2rem);       /* 16-19px */
+  --text-md: clamp(1.2rem, 1.1rem + 0.5vw, 1.563rem);       /* 19-25px */
+  --text-lg: clamp(1.44rem, 1.3rem + 0.7vw, 1.953rem);      /* 23-31px */
+  --text-xl: clamp(1.728rem, 1.5rem + 1.14vw, 2.441rem);    /* 28-39px */
+  --text-2xl: clamp(2.074rem, 1.8rem + 1.37vw, 3.052rem);   /* 33-49px */
+
+  /* Font weights - Max 3 för optimal laddning */
+  --font-regular: 400;
+  --font-semibold: 600;
+  --font-bold: 700;
+
+  /* Line heights - Golden Ratio */
+  --leading-tight: 1.25;
+  --leading-normal: 1.618;  /* φ */
+  --leading-relaxed: 1.75;
+
+  /* ═══════════════════════════════════════════════════════════
+     COLORS - HSL för enkel manipulering
+     60-30-10 regel: Primary 60%, Secondary 30%, Accent 10%
+     ═══════════════════════════════════════════════════════════ */
+
+  /* Primary (Blue gradient) - 60% */
+  --color-primary-h: 197;
+  --color-primary-s: 71%;
+  --color-primary-l: 45%;
+  --color-primary: hsl(var(--color-primary-h), var(--color-primary-s), var(--color-primary-l));
+  --color-primary-dark: hsl(var(--color-primary-h), var(--color-primary-s), 35%);
+  --color-primary-light: hsl(var(--color-primary-h), var(--color-primary-s), 55%);
+
+  /* Secondary (Purple) - 30% */
+  --color-secondary-h: 270;
+  --color-secondary-s: 50%;
+  --color-secondary-l: 60%;
+  --color-secondary: hsl(var(--color-secondary-h), var(--color-secondary-s), var(--color-secondary-l));
+
+  /* Accent (Yellow/Gold) - 10% */
+  --color-accent-h: 43;
+  --color-accent-s: 100%;
+  --color-accent-l: 50%;
+  --color-accent: hsl(var(--color-accent-h), var(--color-accent-s), var(--color-accent-l));
+
+  /* Semantic colors */
+  --color-success: hsl(142, 76%, 36%);
+  --color-warning: hsl(38, 92%, 50%);
+  --color-error: hsl(0, 84%, 60%);
+  --color-info: hsl(199, 89%, 48%);
+
+  /* Neutrals - WCAG AAA kontrast (7:1 på primary bg) */
+  --color-white: hsl(0, 0%, 100%);
+  --color-gray-50: hsl(0, 0%, 98%);
+  --color-gray-100: hsl(0, 0%, 95%);
+  --color-gray-200: hsl(0, 0%, 90%);
+  --color-gray-300: hsl(0, 0%, 80%);
+  --color-gray-400: hsl(0, 0%, 70%);
+  --color-gray-500: hsl(0, 0%, 60%);
+  --color-gray-600: hsl(0, 0%, 40%);
+  --color-gray-700: hsl(0, 0%, 30%);
+  --color-gray-800: hsl(0, 0%, 20%);
+  --color-gray-900: hsl(0, 0%, 10%);
+
+  /* ═══════════════════════════════════════════════════════════
+     ELEVATION - Layered Shadows (Material Design inspired)
+     ═══════════════════════════════════════════════════════════ */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1),
+               0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07),
+               0 2px 4px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1),
+               0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1),
+               0 10px 10px rgba(0, 0, 0, 0.04);
+  --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.15);
+
+  /* Glass morphism */
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-blur: 20px;
+
+  /* ═══════════════════════════════════════════════════════════
+     MOTION - Easing curves + Duration tokens
+     ═══════════════════════════════════════════════════════════ */
+
+  /* Durations */
+  --duration-instant: 100ms;
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 350ms;
+  --duration-slower: 500ms;
+
+  /* Easing curves - Natural physics */
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1); /* Bounce effect */
+  --ease-smooth: cubic-bezier(0.25, 0.1, 0.25, 1);
+
+  /* ═══════════════════════════════════════════════════════════
+     BORDER RADIUS - Soft, consistent rounding
+     ═══════════════════════════════════════════════════════════ */
+  --radius-sm: 0.375rem;  /* 6px */
+  --radius-md: 0.5rem;    /* 8px */
+  --radius-lg: 0.75rem;   /* 12px */
+  --radius-xl: 1rem;      /* 16px */
+  --radius-2xl: 1.5rem;   /* 24px */
+  --radius-full: 9999px;  /* Pills */
+
+  /* ═══════════════════════════════════════════════════════════
+     Z-INDEX - Layering system
+     ═══════════════════════════════════════════════════════════ */
+  --z-base: 0;
+  --z-dropdown: 1000;
+  --z-sticky: 1100;
+  --z-fixed: 1200;
+  --z-modal-backdrop: 1300;
+  --z-modal: 1400;
+  --z-popover: 1500;
+  --z-tooltip: 1600;
+  --z-notification: 1700;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   REDUCED MOTION - Accessibility requirement
+   ═══════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-instant: 0ms;
+    --duration-fast: 0ms;
+    --duration-normal: 0ms;
+    --duration-slow: 0ms;
+    --duration-slower: 0ms;
+  }
+
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DARK MODE SUPPORT (Future-proof)
+   ═══════════════════════════════════════════════════════════ */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Adjust colors for dark mode if needed */
+  }
+}

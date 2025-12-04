@@ -1,139 +1,107 @@
--- Ringoptima V3 Database Schema
--- Kör detta i din Supabase SQL Editor
+-- ===========================================
+-- RINGOPTIMA V3 - SUPABASE DATABASE SCHEMA
+-- ===========================================
+-- Kör detta SQL i Supabase SQL Editor
 
--- Enable UUID extension
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+-- Enable Row Level Security
+ALTER DATABASE postgres SET "app.jwt_secret" TO 'your-jwt-secret';
 
--- Batches table
+-- ===========================================
+-- BATCHES TABLE (Importerade listor)
+-- ===========================================
 CREATE TABLE IF NOT EXISTS batches (
   id BIGSERIAL PRIMARY KEY,
-  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
   file_name TEXT NOT NULL,
   count INTEGER NOT NULL DEFAULT 0,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- Contacts table
+-- Enable RLS
+ALTER TABLE batches ENABLE ROW LEVEL SECURITY;
+
+-- Allow anonymous access (för publik app)
+CREATE POLICY "Allow anonymous read" ON batches FOR SELECT USING (true);
+CREATE POLICY "Allow anonymous insert" ON batches FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow anonymous update" ON batches FOR UPDATE USING (true);
+CREATE POLICY "Allow anonymous delete" ON batches FOR DELETE USING (true);
+
+-- ===========================================
+-- CONTACTS TABLE (Kontakter)
+-- ===========================================
 CREATE TABLE IF NOT EXISTS contacts (
   id BIGSERIAL PRIMARY KEY,
-  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-  batch_id BIGINT REFERENCES batches(id) ON DELETE SET NULL,
+  batch_id BIGINT REFERENCES batches(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
-  org TEXT NOT NULL DEFAULT '',
-  address TEXT NOT NULL DEFAULT '',
-  city TEXT NOT NULL DEFAULT '',
-  phones TEXT NOT NULL DEFAULT '',
-  users TEXT NOT NULL DEFAULT '',
-  operators TEXT NOT NULL DEFAULT '',
-  contact TEXT NOT NULL DEFAULT '',
-  role TEXT NOT NULL DEFAULT '',
-  notes TEXT NOT NULL DEFAULT '',
-  priority TEXT NOT NULL DEFAULT 'medium',
-  status TEXT NOT NULL DEFAULT 'new',
-  last_called TIMESTAMPTZ,
+  org TEXT DEFAULT '',
+  address TEXT DEFAULT '',
+  city TEXT DEFAULT '',
+  phones TEXT DEFAULT '',
+  users TEXT DEFAULT '',
+  operators TEXT DEFAULT '',
+  contact TEXT DEFAULT '',
+  role TEXT DEFAULT '',
+  notes TEXT DEFAULT '',
+  priority TEXT NOT NULL DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high')),
+  status TEXT NOT NULL DEFAULT 'new' CHECK (status IN ('new', 'contacted', 'interested', 'not_interested', 'converted')),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- Call logs table
-CREATE TABLE IF NOT EXISTS call_logs (
-  id BIGSERIAL PRIMARY KEY,
-  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-  contact_id BIGINT REFERENCES contacts(id) ON DELETE CASCADE,
-  duration INTEGER NOT NULL DEFAULT 0,
-  outcome TEXT NOT NULL,
-  notes TEXT NOT NULL DEFAULT '',
-  next_follow_up TIMESTAMPTZ,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
+-- Enable RLS
+ALTER TABLE contacts ENABLE ROW LEVEL SECURITY;
 
--- Saved filters table
-CREATE TABLE IF NOT EXISTS saved_filters (
-  id BIGSERIAL PRIMARY KEY,
-  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-  name TEXT NOT NULL,
-  filter JSONB NOT NULL,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
+-- Allow anonymous access
+CREATE POLICY "Allow anonymous read" ON contacts FOR SELECT USING (true);
+CREATE POLICY "Allow anonymous insert" ON contacts FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow anonymous update" ON contacts FOR UPDATE USING (true);
+CREATE POLICY "Allow anonymous delete" ON contacts FOR DELETE USING (true);
 
--- Indexes for better performance
-CREATE INDEX IF NOT EXISTS idx_contacts_user_id ON contacts(user_id);
+-- Index för snabbare sökningar
 CREATE INDEX IF NOT EXISTS idx_contacts_batch_id ON contacts(batch_id);
 CREATE INDEX IF NOT EXISTS idx_contacts_status ON contacts(status);
 CREATE INDEX IF NOT EXISTS idx_contacts_priority ON contacts(priority);
-CREATE INDEX IF NOT EXISTS idx_batches_user_id ON batches(user_id);
-CREATE INDEX IF NOT EXISTS idx_call_logs_user_id ON call_logs(user_id);
-CREATE INDEX IF NOT EXISTS idx_call_logs_contact_id ON call_logs(contact_id);
-CREATE INDEX IF NOT EXISTS idx_saved_filters_user_id ON saved_filters(user_id);
+CREATE INDEX IF NOT EXISTS idx_contacts_name ON contacts(name);
 
--- Row Level Security (RLS) Policies
-ALTER TABLE batches ENABLE ROW LEVEL SECURITY;
-ALTER TABLE contacts ENABLE ROW LEVEL SECURITY;
-ALTER TABLE call_logs ENABLE ROW LEVEL SECURITY;
+-- ===========================================
+-- SAVED FILTERS TABLE (Sparade filter)
+-- ===========================================
+CREATE TABLE IF NOT EXISTS saved_filters (
+  id BIGSERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  filter JSONB NOT NULL DEFAULT '{}',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Enable RLS
 ALTER TABLE saved_filters ENABLE ROW LEVEL SECURITY;
 
--- Batches policies
-CREATE POLICY "Users can view their own batches" ON batches
-  FOR SELECT USING (auth.uid() = user_id);
+-- Allow anonymous access
+CREATE POLICY "Allow anonymous read" ON saved_filters FOR SELECT USING (true);
+CREATE POLICY "Allow anonymous insert" ON saved_filters FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow anonymous update" ON saved_filters FOR UPDATE USING (true);
+CREATE POLICY "Allow anonymous delete" ON saved_filters FOR DELETE USING (true);
 
-CREATE POLICY "Users can insert their own batches" ON batches
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
-
-CREATE POLICY "Users can update their own batches" ON batches
-  FOR UPDATE USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can delete their own batches" ON batches
-  FOR DELETE USING (auth.uid() = user_id);
-
--- Contacts policies
-CREATE POLICY "Users can view their own contacts" ON contacts
-  FOR SELECT USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can insert their own contacts" ON contacts
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
-
-CREATE POLICY "Users can update their own contacts" ON contacts
-  FOR UPDATE USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can delete their own contacts" ON contacts
-  FOR DELETE USING (auth.uid() = user_id);
-
--- Call logs policies
-CREATE POLICY "Users can view their own call logs" ON call_logs
-  FOR SELECT USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can insert their own call logs" ON call_logs
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
-
-CREATE POLICY "Users can update their own call logs" ON call_logs
-  FOR UPDATE USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can delete their own call logs" ON call_logs
-  FOR DELETE USING (auth.uid() = user_id);
-
--- Saved filters policies
-CREATE POLICY "Users can view their own saved filters" ON saved_filters
-  FOR SELECT USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can insert their own saved filters" ON saved_filters
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
-
-CREATE POLICY "Users can update their own saved filters" ON saved_filters
-  FOR UPDATE USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can delete their own saved filters" ON saved_filters
-  FOR DELETE USING (auth.uid() = user_id);
-
--- Function to update updated_at timestamp
+-- ===========================================
+-- FUNCTION: Auto-update updated_at
+-- ===========================================
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
   NEW.updated_at = NOW();
   RETURN NEW;
 END;
-$$ language 'plpgsql';
+$$ LANGUAGE plpgsql;
 
--- Trigger to automatically update updated_at
-CREATE TRIGGER update_contacts_updated_at BEFORE UPDATE ON contacts
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_contacts_updated_at
+  BEFORE UPDATE ON contacts
+  FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at_column();
+
+-- ===========================================
+-- DONE! 
+-- ===========================================
+-- Efter att ha kört detta SQL, gå till:
+-- 1. Project Settings > API
+-- 2. Kopiera "Project URL" och "anon public" key
+-- 3. Skapa .env fil med dessa värden

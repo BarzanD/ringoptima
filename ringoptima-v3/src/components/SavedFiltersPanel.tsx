@@ -39,10 +39,11 @@ export function SavedFiltersPanel({
           {!isSaving ? (
             <button
               onClick={() => setIsSaving(true)}
-              className="w-full btn-premium p-3 rounded-xl flex items-center gap-3 font-semibold text-sm"
+              className="w-full btn-premium p-2 rounded-lg flex items-center justify-center gap-1.5 font-semibold text-[10px]"
+              title="Spara aktuellt filter"
             >
-              <Save className="w-4 h-4" />
-              Spara aktuellt filter
+              <Save className="w-3 h-3" />
+              Spara filter
             </button>
           ) : (
             <div className="space-y-2">
