@@ -1,16 +1,16 @@
 import { useEffect, useState, useRef } from 'react';
-import { Phone, Upload, Download, Search, Filter, BarChart3, Menu, X, Star, ArrowUpDown, LayoutDashboard, LayoutGrid, LayoutList } from 'lucide-react';
+import { Phone, Upload, Download, Search, Menu, X, Star, LayoutDashboard, LayoutGrid, LayoutList } from 'lucide-react';
 import { db } from './lib/supabase';
 import { useStore } from './lib/store';
 import { parseCSV, transformCSV, exportToCSV } from './lib/csv';
-import { cn, formatDate, getStatusColor, getPriorityColor, downloadFile } from './lib/utils';
+import { cn, getStatusColor, downloadFile } from './lib/utils';
 import { ToastContainer } from './components/Toast';
 import { Dashboard } from './components/Dashboard';
 import { CommandPalette } from './components/CommandPalette';
 import { ContactDetailModal } from './components/ContactDetailModal';
 import { ContactCard } from './components/ContactCard';
 import { SavedFiltersPanel } from './components/SavedFiltersPanel';
-import { InitialLoadingScreen, TableSkeleton, StatsSkeleton, ImportProgress } from './components/LoadingStates';
+import { InitialLoadingScreen, ImportProgress } from './components/LoadingStates';
 import { toast } from './lib/toast';
 import type { Contact, SavedFilter } from './types';
 
@@ -24,13 +24,13 @@ function App() {
   const [showDashboard, setShowDashboard] = useState(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
-  const [selectedContactIds, setSelectedContactIds] = useState<Set<number>>(new Set());
+  const [_selectedContactIds, _setSelectedContactIds] = useState<Set<number>>(new Set());
   const [savedFilters, setSavedFilters] = useState<SavedFilter[]>([]);
   const [activeFilterId, setActiveFilterId] = useState<number | null>(null);
   const [loggingContactId, setLoggingContactId] = useState<number | null>(null);
   const [logNote, setLogNote] = useState('');
   const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
-  const [authenticated, setAuthenticated] = useState(false);
+  const [_authenticated, setAuthenticated] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Initialize auth and load data on mount
@@ -108,15 +108,18 @@ function App() {
       const rows = parseCSV(text);
 
       setImportProgress(50);
+      const totalRows = rows.length - 1; // Exkludera header
       const batchId = await db.addBatch({
         name: file.name,
         fileName: file.name,
-        count: rows.length - 1,
+        count: totalRows,
         createdAt: new Date().toISOString(),
       });
 
       setImportProgress(70);
       const newContacts = transformCSV(rows, batchId);
+      const importedCount = newContacts.length;
+      const skippedCount = totalRows - importedCount;
 
       setImportProgress(85);
       await db.addContacts(newContacts);
@@ -129,7 +132,11 @@ function App() {
       // Brief delay to show 100% before closing
       setTimeout(() => {
         setImporting(false);
-        toast.success(`${newContacts.length} kontakter importerade från ${file.name}`);
+        if (skippedCount > 0) {
+          toast.success(`${importedCount} kontakter importerade från ${file.name}. ${skippedCount} rader hoppades över (saknar telefonnummer eller firmatecknare).`);
+        } else {
+          toast.success(`${importedCount} kontakter importerade från ${file.name}`);
+        }
       }, 500);
     } catch (error) {
       console.error('Import error:', error);

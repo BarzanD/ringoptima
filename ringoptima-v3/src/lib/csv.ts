@@ -138,6 +138,15 @@ export function transformCSV(rows: string[][], batchId: number): Omit<Contact, '
 
     const extracted = extractPhoneData(r[4] || '', r[5] || '', r[6] || '');
 
+    // KRITISK VALIDERING: Hoppa över rader utan telefonnummer ELLER firmatecknare
+    const hasPhone = extracted.phones && extracted.phones.trim().length > 0;
+    const hasContact = extracted.contact && extracted.contact.trim().length > 0;
+
+    if (!hasPhone || !hasContact) {
+      console.log(`Hoppar över rad ${i + 1}: ${r[0]} (Saknar ${!hasPhone ? 'telefonnummer' : ''} ${!hasPhone && !hasContact ? 'och' : ''} ${!hasContact ? 'firmatecknare' : ''})`);
+      continue;
+    }
+
     contacts.push({
       batchId,
       name: r[0].trim(),
