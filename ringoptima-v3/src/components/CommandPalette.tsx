@@ -6,10 +6,6 @@ import {
   LayoutDashboard,
   Search,
   Filter,
-  BarChart3,
-  Star,
-  Phone,
-  X,
   FileText,
 } from 'lucide-react';
 import { cn } from '../lib/utils';
